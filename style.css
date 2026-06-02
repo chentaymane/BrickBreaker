@@ -1,0 +1,145 @@
+/* Reset and Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Arial Black', Gadget, sans-serif;
+    
+    /* BACKGROUND TEXTURE: Inspired by your image */
+    background-color: #00008b;
+    background-image: 
+        radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0),
+        linear-gradient(45deg, #000066 25%, transparent 25%, transparent 75%, #000066 75%, #000066),
+        linear-gradient(-45deg, #000066 25%, transparent 25%, transparent 75%, #000066 75%, #000066);
+    background-size: 40px 40px;
+    
+    /* Frame border like the game cabinet */
+    border: 12px ridge #555;
+    overflow: hidden;
+}
+
+/* Header Bricks styling */
+.header-bricks {
+    position: absolute;
+    top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.row { display: flex; gap: 4px; }
+
+.brick {
+    width: 50px;
+    height: 20px;
+    border: 2px solid rgba(0,0,0,0.3);
+    box-shadow: inset 2px 2px 5px rgba(255,255,255,0.4);
+}
+
+.red { background: #ff0000; }
+.orange { background: #ff8800; }
+
+/* Menu Card */
+.menu-container {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 50px;
+    border-radius: 15px;
+    border: 3px solid #00d4ff;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+    z-index: 10;
+}
+
+.game-title {
+    color: #fff;
+    font-size: 3.5rem;
+    letter-spacing: 4px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px #00d4ff, 3px 3px 0px #ff0066;
+}
+
+/* Visual Mockup of Ball/Paddle in Menu */
+.menu-art {
+    height: 60px;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.mini-ball {
+    width: 20px;
+    height: 20px;
+    background: #00ffff;
+    border-radius: 50%;
+    margin: 0 auto;
+    box-shadow: 0 0 15px #00ffff;
+}
+
+.mini-paddle {
+    width: 80px;
+    height: 12px;
+    background: linear-gradient(to right, #ff4400, #cccccc, #ff4400);
+    margin: 10px auto;
+    border-radius: 5px;
+}
+
+/* Button Styling */
+.start-button {
+    background: linear-gradient(180deg, #00ffcc 0%, #0088aa 100%);
+    border: none;
+    padding: 15px 50px;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.3s;
+    box-shadow: 0 4px 0 #005566;
+}
+
+.start-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #00ffcc;
+}
+.pause-container {
+    position: absolute;
+    top: 20px;   /* Distance from top */
+    left: 20px;  /* Distance from left */
+    z-index: 100; /* Ensures it stays above the game */
+}
+
+#pause-btn {
+    padding: 10px 15px;
+    background: #222;
+    color: #00ffff;
+    border: 2px solid #00ffff;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+/* Full screen dimming effect when paused */
+#pause-overlay {
+    position: fixed; /* Covers the entire screen */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 3rem;
+    pointer-events: none; /* Allows you to click the button through the overlay */
+}
+
+.hidden { display: none !important; }

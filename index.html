@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brick Breaker - Start</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Decorative bricks mimicking your image
+    <div class="header-bricks">
+        <div class="row">
+            <div class="brick red"></div><div class="brick red"></div><div class="brick red"></div><div class="brick red"></div><div class="brick red"></div>
+        </div>
+        <div class="row">
+            <div class="brick orange"></div><div class="brick orange"></div><div class="brick orange"></div><div class="brick orange"></div><div class="brick orange"></div>
+        </div>
+    </div> -->
+
+    <!-- Start Menu Container -->
+    <div id="menu-container" class="menu-container">
+        <h1 class="game-title">BRICK BREAKER</h1>
+        <div class="menu-art">
+            <div class="mini-ball"></div>
+            <div class="mini-paddle"></div>
+        </div>
+        <button class="start-button" onclick="startGame()">START GAME</button>
+        <p class="controls-hint">Use Arrows to Move</p>
+    </div>
+
+    <div class="pause-container">
+        <button id="pause-btn" onclick="togglePause()" hidden>⏸ PAUSE</button>
+        <div id="pause-overlay" class="hidden">GAME PAUSED</div>
+    </div>  
+    <script src="script/stratGame.js"></script>
+</body>
+</html>
