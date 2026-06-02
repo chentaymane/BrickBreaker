@@ -142,4 +142,31 @@ body {
     pointer-events: none; /* Allows you to click the button through the overlay */
 }
 
+
+
 .hidden { display: none !important; }
+
+
+.resume-btn{
+    padding: 10px 20px;
+    background: #00ffcc;
+    color: #222;
+    border: none;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-top: 20px;
+    }
+.restart-btn{
+    padding: 10px 20px;
+    background: #ff4400;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-left: 20px;
+    }
