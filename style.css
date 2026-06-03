@@ -128,7 +128,7 @@ body {
 
 /* Full screen dimming effect when paused */
 #pause-overlay {
-    position: fixed; /* Covers the entire screen */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
@@ -139,9 +139,7 @@ body {
     align-items: center;
     color: white;
     font-size: 3rem;
-    pointer-events: none; /* Allows you to click the button through the overlay */
 }
-
 
 
 .hidden { display: none !important; }
@@ -152,7 +150,6 @@ body {
     background: #00ffcc;
     color: #222;
     border: none;
-    cursor: pointer;
     font-family: 'Arial', sans-serif;
     font-weight: bold;
     border-radius: 5px;
@@ -163,7 +160,6 @@ body {
     background: #ff4400;
     color: #fff;
     border: none;
-    cursor: pointer;
     font-family: 'Arial', sans-serif;
     font-weight: bold;
     border-radius: 5px;
