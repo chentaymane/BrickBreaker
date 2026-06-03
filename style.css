@@ -12,40 +12,17 @@ body {
     justify-content: center;
     align-items: center;
     font-family: 'Arial Black', Gadget, sans-serif;
-    
-    /* BACKGROUND TEXTURE: Inspired by your image */
+
     background-color: #00008b;
-    background-image: 
+    background-image:
         radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0),
         linear-gradient(45deg, #000066 25%, transparent 25%, transparent 75%, #000066 75%, #000066),
         linear-gradient(-45deg, #000066 25%, transparent 25%, transparent 75%, #000066 75%, #000066);
     background-size: 40px 40px;
-    
-    /* Frame border like the game cabinet */
+
     border: 12px ridge #555;
     overflow: hidden;
 }
-
-/* Header Bricks styling */
-.header-bricks {
-    position: absolute;
-    top: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.row { display: flex; gap: 4px; }
-
-.brick {
-    width: 50px;
-    height: 20px;
-    border: 2px solid rgba(0,0,0,0.3);
-    box-shadow: inset 2px 2px 5px rgba(255,255,255,0.4);
-}
-
-.red { background: #ff0000; }
-.orange { background: #ff8800; }
 
 /* Menu Card */
 .menu-container {
@@ -58,6 +35,7 @@ body {
     z-index: 10;
 }
 
+/* Game Title */
 .game-title {
     color: #fff;
     font-size: 3.5rem;
@@ -66,7 +44,7 @@ body {
     text-shadow: 0 0 10px #00d4ff, 3px 3px 0px #ff0066;
 }
 
-/* Visual Mockup of Ball/Paddle in Menu */
+/* Menu Art */
 .menu-art {
     height: 60px;
     position: relative;
@@ -90,7 +68,7 @@ body {
     border-radius: 5px;
 }
 
-/* Button Styling */
+/* Start Button */
 .start-button {
     background: linear-gradient(180deg, #00ffcc 0%, #0088aa 100%);
     border: none;
@@ -108,11 +86,13 @@ body {
     transform: scale(1.05);
     box-shadow: 0 0 20px #00ffcc;
 }
+
+/* Pause UI */
 .pause-container {
     position: absolute;
-    top: 20px;   /* Distance from top */
-    left: 20px;  /* Distance from left */
-    z-index: 100; /* Ensures it stays above the game */
+    top: 20px;
+    left: 20px;
+    z-index: 100;
 }
 
 #pause-btn {
@@ -126,7 +106,7 @@ body {
     border-radius: 5px;
 }
 
-/* Full screen dimming effect when paused */
+/* FIX: overlay must allow clicks */
 #pause-overlay {
     position: fixed;
     top: 0;
@@ -139,12 +119,20 @@ body {
     align-items: center;
     color: white;
     font-size: 3rem;
+    z-index: 200;
 }
 
+/* FIX: allow clicking buttons */
+.overlay-content {
+    pointer-events: auto;
+}
 
-.hidden { display: none !important; }
+/* hidden helper */
+.hidden {
+    display: none !important;
+}
 
-
+/* Resume / Restart */
 .resume-btn{
     padding: 10px 20px;
     background: #00ffcc;
@@ -154,7 +142,8 @@ body {
     font-weight: bold;
     border-radius: 5px;
     margin-top: 20px;
-    }
+}
+
 .restart-btn{
     padding: 10px 20px;
     background: #ff4400;
@@ -166,37 +155,34 @@ body {
     margin-top: 20px;
     margin-left: 20px;
 }
+
+/* BRICKS */
 .bricks-container {
     position: absolute;
     top: 90px;
     left: 50%;
     transform: translateX(-50%);
-    
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-/* each row */
 .brick-row {
     display: flex;
     gap: 8px;
     justify-content: center;
 }
 
-/* BIG BRICKS */
 .brick {
-    width: 85px;    
-    height: 30px;    
+    width: 85px;
+    height: 30px;
     border-radius: 6px;
     border: 2px solid rgba(0,0,0,0.5);
-
     box-shadow:
         inset 2px 2px 6px rgba(255,255,255,0.4),
         inset -2px -2px 6px rgba(0,0,0,0.4);
 }
 
-/* row colors (clean arcade style) */
 .red {
     background: linear-gradient(to bottom, #ff3b3b, #a80000);
 }
@@ -204,17 +190,26 @@ body {
 .yellow {
     background: linear-gradient(to bottom, #ffe44d, #c99700);
 }
-#paddle {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
 
+/* FIX: GAME SCREEN (you forgot hidden control) */
+#game-container {
+    position: relative;
+    width: 900px;
+    height: 600px;
+    background: #000;
+    margin: auto;
+    overflow: hidden;
+    border: 4px solid #00d4ff;
+    border-radius: 10px;
+}
+
+/* FIX: PADDLE must be inside game */
+#paddle {
+    position: absolute;
+    bottom: 20px;
     width: 250px;
     height: 18px;
-
     background: linear-gradient(to bottom, #555, #222);
     border-radius: 10px;
-
     border: 2px solid #111;
 }

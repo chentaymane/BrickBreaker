@@ -8,29 +8,31 @@
 </head>
 <body>
 
-  <div class="bricks-container"></div>
+    <div id="game-container" class="hidden"></div>
 
     <div id="menu-container" class="menu-container">
         <h1 class="game-title">BRICK BREAKER</h1>
+
         <div class="menu-art">
             <div class="mini-ball"></div>
             <div class="mini-paddle"></div>
         </div>
-        <button class="start-button" >START GAME</button>
+
+        <button class="start-button">START GAME</button>
         <p class="controls-hint">Use Arrows to Move</p>
     </div>
 
- <div class="pause-container">
-    <button id="pause-btn" hidden>⏸ PAUSE</button>
-    
-    <div id="pause-overlay" class="hidden">
-        <div class="overlay-content">
-            <h2>PAUSED</h2>
-            <button class="resume-btn">RESUME</button>
-            <button class="restart-btn">RESTART</button>
+    <div class="pause-container">
+        <button id="pause-btn" hidden>⏸ PAUSE</button>
+
+        <div id="pause-overlay" class="hidden">
+            <div class="overlay-content">
+                <h2>PAUSED</h2>
+                <button class="resume-btn">RESUME</button>
+                <button class="restart-btn">RESTART</button>
+            </div>
         </div>
     </div>
-</div>
+
     <script src="script/stratGame.js"></script>
 </body>
-</html>
