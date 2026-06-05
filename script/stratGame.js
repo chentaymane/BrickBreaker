@@ -8,6 +8,8 @@ let startBtn = document.querySelector('.start-button');
 
 let gameContainer = document.getElementById("game-container");
 let paddle = null;
+let ball = null; // ADDED: Declare ball variable
+let ballAttached = true; // ADDED: Keeps track of if the ball is stuck to the paddle
 
 // START GAME 
 startBtn.addEventListener('click', function() {
@@ -25,28 +27,28 @@ startBtn.addEventListener('click', function() {
         let rowDiv = document.createElement("div");
         rowDiv.classList.add("brick-row");
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 8; i++) {
             let brick = document.createElement("div");
             brick.classList.add("brick");
-
-            // alternate colors
             brick.classList.add(row % 2 === 0 ? "red" : "yellow");
-
             rowDiv.appendChild(brick);
         }
-
         bricksContainer.appendChild(rowDiv);
     }
-
     gameContainer.appendChild(bricksContainer);
 
     // create paddle
     paddle = document.createElement("div");
     paddle.id = "paddle";
     gameContainer.appendChild(paddle);
+
+    // ADDED: Create the ball
+    ball = document.createElement("div");
+    ball.id = "ball";
+    gameContainer.appendChild(ball);
 });
 
-// MOVE PADDLE 
+// MOVE PADDLE AND BALL
 document.addEventListener("mousemove", (e) => {
     if (!paddle) return;
 
@@ -54,6 +56,7 @@ document.addEventListener("mousemove", (e) => {
     let x = e.clientX - rect.left;
 
     let paddleWidth = 250;
+    let ballWidth = 20; // Matches the CSS width
 
     let maxX = rect.width - paddleWidth;
     let finalX = x - paddleWidth / 2;
@@ -63,7 +66,15 @@ document.addEventListener("mousemove", (e) => {
     if (finalX > maxX) finalX = maxX;
 
     paddle.style.left = finalX + "px";
+
+    // ADDED: Move the ball with the paddle if it hasn't been launched yet
+    if (ballAttached && ball) {
+        // Center the ball on the paddle
+        let ballX = finalX + (paddleWidth / 2) - (ballWidth / 2);
+        ball.style.left = ballX + "px";
+    }
 });
+
 // PAUSE GAME 
 pauseBtn.addEventListener('click', function() {
     pauseOverlay.classList.remove('hidden');
