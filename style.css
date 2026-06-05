@@ -214,16 +214,29 @@ body {
     border: 2px solid #111;
 }
 
-/* BALL */
+/* FIX: PADDLE - Anchored to bottom-left, moved via GPU */
+#paddle {
+    position: absolute;
+    bottom: 20px;  /* Fixed distance from bottom */
+    left: 0;       /* Base horizontal starting line */
+    width: 250px;
+    height: 18px;
+    background: linear-gradient(to bottom, #555, #222);
+    border-radius: 10px;
+    border: 2px solid #111;
+    will-change: transform; /* Optimizes compositing layers */
+    transform: translateX(325px); /* Centers it initially (900/2 - 250/2) */
+}
+
+/* FIX: BALL - Anchored to bottom-left, moved via GPU */
 #ball {
     position: absolute;
+    bottom: 0;     /* Base vertical starting line */
+    left: 0;       /* Base horizontal starting line */
     width: 20px;
     height: 20px;
     background-color: #ffffff;
     border-radius: 50%;
-    box-shadow: 0 0 10px #ffffff, 0 0 20px #00ffff; /* Adds a nice glow */
-    
-    /* Initially position it right above the paddle */
-    /* Paddle is bottom: 20px + height: 18px = 38px */
-    bottom: 38px; 
+    box-shadow: 0 0 10px #ffffff, 0 0 20px #00ffff;
+    will-change: transform; /* Optimizes compositing layers */
 }
