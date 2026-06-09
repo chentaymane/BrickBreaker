@@ -8,6 +8,11 @@
 </head>
 <body>
 
+    <div id="hud" class="hidden">
+        <span id="score-display">SCORE: 0</span>
+        <span id="lives-display">LIVES: 3</span>
+    </div>
+
     <div id="game-container" class="hidden"></div>
 
     <div id="menu-container" class="menu-container">
@@ -31,6 +36,22 @@
                 <button class="resume-btn">RESUME</button>
                 <button class="restart-btn">RESTART</button>
             </div>
+        </div>
+    </div>
+
+    <div id="win-overlay" class="hidden">
+        <div class="overlay-content">
+            <h2 class="win-title">YOU WIN!</h2>
+            <p id="win-score" class="final-score">SCORE: 0</p>
+            <button class="restart-btn">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <div id="gameover-overlay" class="hidden">
+        <div class="overlay-content">
+            <h2 class="gameover-title">GAME OVER</h2>
+            <p id="gameover-score" class="final-score">SCORE: 0</p>
+            <button class="restart-btn">PLAY AGAIN</button>
         </div>
     </div>
 

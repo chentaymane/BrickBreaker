@@ -1,142 +1,198 @@
-// UI ELEMENTS 
-let resumeBtn = document.querySelector('.resume-btn');
-let restartBtn = document.querySelector('.restart-btn');
-let pauseBtn = document.getElementById('pause-btn');
-let pauseOverlay = document.getElementById('pause-overlay');
-let menuContainer = document.getElementById('menu-container');
-let startBtn = document.querySelector('.start-button');
-let gameContainer = document.getElementById("game-container");
+const $ = s => document.querySelector(s);
+const dom = {
+  resume: $('.resume-btn'),
+  restart: $('.restart-btn'),
+  pause: $('#pause-btn'),
+  overlay: $('#pause-overlay'),
+  win: $('#win-overlay'),
+  gameover: $('#gameover-overlay'),
+  menu: $('#menu-container'),
+  start: $('.start-button'),
+  game: $('#game-container'),
+  hud: $('#hud'),
+  scoreEl: $('#score-display'),
+  livesEl: $('#lives-display'),
+  winScore: $('#win-score'),
+  gameoverScore: $('#gameover-score')
+};
 
 let paddle = null;
 let ball = null;
-
-// HIGH-PERFORMANCE GAME STATE VARIABLES
-let ballAttached = true; 
+let bricks = [];
+let ballAttached = true;
 let gameRunning = false;
+let paddleX = 325;
+let ballX = 440;
+let ballY = 38;
+let ballDx = 5;
+let ballDy = 5;
+let score = 0;
+let lives = 3;
 
-let paddleX = 325; // Initial centered paddle position
-let ballX = 440;   // Coordinates mapped perfectly to transforms
-let ballY = 38;    // Rests right above paddle (bottom 20px + paddle height 18px)
+const W = 900, H = 600, BORDER = 4;
+const CW = W - BORDER * 2, CH = H - BORDER * 2;
+const PW = 250, PH = 18, BS = 20;
+const ROWS = 6, COLS = 8, SPD = 3;
 
-let ballDx = 5;    // Horizontal velocity
-let ballDy = 5;    // Vertical velocity
-
-// START GAME 
-startBtn.addEventListener('click', function() {
-    menuContainer.style.display = 'none';
-    pauseBtn.hidden = false;
-    gameContainer.classList.remove("hidden");
-
-    // Create bricks
-    let bricksContainer = document.createElement("div");
-    bricksContainer.classList.add("bricks-container");
-
-    for (let row = 0; row < 6; row++) {
-        let rowDiv = document.createElement("div");
-        rowDiv.classList.add("brick-row");
-
-        for (let i = 0; i < 8; i++) {
-            let brick = document.createElement("div");
-            brick.classList.add("brick");
-            brick.classList.add(row % 2 === 0 ? "red" : "yellow");
-            rowDiv.appendChild(brick);
-        }
-        bricksContainer.appendChild(rowDiv);
-    }
-    gameContainer.appendChild(bricksContainer);
-
-    // Create paddle
-    paddle = document.createElement("div");
-    paddle.id = "paddle";
-    gameContainer.appendChild(paddle);
-
-    // Create ball
-    ball = document.createElement("div");
-    ball.id = "ball";
-    gameContainer.appendChild(ball);
-
-    // Reset setup states
-    ballAttached = true;
-    gameRunning = true;
-    ballX = 440;
-    ballY = 38;
-    
-    // Set initial layout using hardware acceleration
-    paddle.style.transform = `translateX(${paddleX}px)`;
-    ball.style.transform = `translate(${ballX}px, ${-ballY}px)`;
-});
-
-// LAUNCH BALL ON CLICK
-gameContainer.addEventListener('click', function() {
-    if (ballAttached && gameRunning) {
-        ballAttached = false;
-        requestAnimationFrame(gameLoop); // Kickstarts the optimized pipeline loop
-    }
-});
-
-// MOVE PADDLE (Hardware Accelerated mouse tracking)
-document.addEventListener("mousemove", (e) => {
-    if (!paddle || !gameRunning) return;
-
-    let rect = gameContainer.getBoundingClientRect();
-    let x = e.clientX - rect.left;
-
-    let paddleWidth = 250;
-    let maxX = rect.width - paddleWidth; // 900 - 250 = 650
-    paddleX = x - paddleWidth / 2;
-
-    // Clamp inside container
-    if (paddleX < 0) paddleX = 0;
-    if (paddleX > maxX) paddleX = maxX;
-
-    // Execute via fast composite layer tracking
-    paddle.style.transform = `translateX(${paddleX}px)`;
-
-    // Stick ball to the center of paddle if not launched yet
-    if (ballAttached && ball) {
-        ballX = paddleX + (paddleWidth / 2) - 10; // 10 is half of ball width
-        ball.style.transform = `translate(${ballX}px, ${-ballY}px)`;
-    }
-});
-
-// THE SMOOTH 60 FPS GAME LOOP
-function gameLoop() {
-    // If user pauses or ball resets, break out of loop to save CPU tasks
-    if (ballAttached || !gameRunning) return;
-
-    // 1. Calculate physics tasks
-    ballX += ballDx;
-    ballY += ballDy;
-
-    // 2. Compute Layout boundaries (Container: 900x600, Ball: 20x20)
-    if (ballX <= 0 || ballX >= 880) ballDx = -ballDx; // Wall hit
-    if (ballY >= 580) ballDy = -ballDy;               // Ceiling hit
-    if (ballY <= 0) ballDy = -ballDy;                 // Temporary floor hit
-
-    // 3. Update DOM via Compositing step (Skips expensive Layout & Paint stages)
-    // Note: Y is negative because transforms calculate upward movements inversely from baseline 0
-    ball.style.transform = `translate(${ballX}px, ${-ballY}px)`;
-
-    // 4. Request clean frame synchronization from the browser
-    requestAnimationFrame(gameLoop);
+function aabb(a, b) {
+  return a.right > b.left && a.left < b.right && a.bottom > b.top && a.top < b.bottom;
 }
 
-// PAUSE GAME
-pauseBtn.addEventListener('click', function() {
-    pauseOverlay.classList.remove('hidden');
-    gameRunning = false;
-});
+function updateHUD() {
+  dom.scoreEl.textContent = `SCORE: ${score}`;
+  dom.livesEl.textContent = `LIVES: ${lives}`;
+}
 
-// RESUME GAME
-resumeBtn.addEventListener('click', function() {
-    pauseOverlay.classList.add('hidden');
-    gameRunning = true;
-    if (!ballAttached) {
-        requestAnimationFrame(gameLoop); // Safely resume loops without stack multiplication
+function attachBall() {
+  ballAttached = true;
+  paddleX = (CW - PW) / 2;
+  ballX = paddleX + PW / 2 - BS / 2;
+  ballY = CH - 20 - PH - BS;
+  ballDx = SPD;
+  ballDy = -SPD;
+  paddle.style.transform = `translateX(${paddleX}px)`;
+  ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
+}
+
+function init() {
+  dom.game.innerHTML = '';
+
+  let bc = document.createElement('div');
+  bc.className = 'bricks-container';
+  for (let r = 0; r < ROWS; r++) {
+    let row = document.createElement('div');
+    row.className = 'brick-row';
+    for (let i = 0; i < COLS; i++) {
+      let b = document.createElement('div');
+      b.className = `brick ${r % 2 ? 'yellow' : 'red'}`;
+      row.appendChild(b);
     }
+    bc.appendChild(row);
+  }
+  dom.game.appendChild(bc);
+  bricks = [...document.querySelectorAll('.brick')];
+
+  paddle = document.createElement('div');
+  paddle.id = 'paddle';
+  dom.game.appendChild(paddle);
+
+  ball = document.createElement('div');
+  ball.id = 'ball';
+  dom.game.appendChild(ball);
+
+  score = 0;
+  lives = 3;
+  updateHUD();
+  attachBall();
+  gameRunning = true;
+}
+
+function reset() {
+  dom.game.innerHTML = '';
+  dom.menu.style.display = '';
+  dom.pause.hidden = true;
+  dom.hud.classList.add('hidden');
+  dom.overlay.classList.add('hidden');
+  dom.win.classList.add('hidden');
+  dom.gameover.classList.add('hidden');
+  dom.game.classList.add('hidden');
+  ballAttached = true;
+  gameRunning = false;
+}
+
+dom.start.addEventListener('click', function() {
+  dom.menu.style.display = 'none';
+  dom.pause.hidden = false;
+  dom.hud.classList.remove('hidden');
+  dom.game.classList.remove('hidden');
+  init();
 });
 
-// RESTART GAME
-restartBtn.addEventListener('click', function() {
-    location.reload();
+dom.game.addEventListener('click', function() {
+  if (ballAttached && gameRunning) {
+    ballAttached = false;
+    requestAnimationFrame(gameLoop);
+  }
 });
+
+document.addEventListener('mousemove', function(e) {
+  if (!paddle || !gameRunning) return;
+
+  let rect = dom.game.getBoundingClientRect();
+  paddleX = Math.max(0, Math.min(e.clientX - rect.left - BORDER - PW / 2, CW - PW));
+  paddle.style.transform = `translateX(${paddleX}px)`;
+
+  if (ballAttached && ball) {
+    ballX = paddleX + PW / 2 - BS / 2;
+    ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
+  }
+});
+
+function gameLoop() {
+  if (ballAttached || !gameRunning) return;
+
+  ballX += ballDx;
+  ballY += ballDy;
+
+  if (ballX <= 0 || ballX >= CW - BS) ballDx = -ballDx;
+  if (ballY <= 0) ballDy = -ballDy;
+  if (ballY >= CH - BS) { loseBall(); return; }
+
+  let br = ball.getBoundingClientRect();
+
+  for (let b of bricks) {
+    if (b.style.visibility === 'hidden') continue;
+    let r = b.getBoundingClientRect();
+    if (aabb(br, r)) {
+      b.style.visibility = 'hidden';
+      score += 10;
+      updateHUD();
+      if (bricks.every(x => x.style.visibility === 'hidden')) {
+        gameRunning = false;
+        dom.winScore.textContent = `SCORE: ${score}`;
+        dom.win.classList.remove('hidden');
+        return;
+      }
+      let overlapX = Math.min(br.right - r.left, r.right - br.left);
+      let overlapY = Math.min(br.bottom - r.top, r.bottom - br.top);
+      if (overlapX < overlapY) { ballDx = -ballDx; ballX += ballDx; }
+      else                     { ballDy = -ballDy; ballY += ballDy; }
+      break;
+    }
+  }
+
+  if (aabb(br, paddle.getBoundingClientRect())) {
+    ballDy = -SPD;
+    ballY = CH - 20 - PH - BS;
+  }
+
+  ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
+  requestAnimationFrame(gameLoop);
+}
+
+function loseBall() {
+  lives--;
+  if (lives <= 0) {
+    dom.gameoverScore.textContent = `SCORE: ${score}`;
+    dom.gameover.classList.remove('hidden');
+    gameRunning = false;
+    return;
+  }
+  updateHUD();
+  attachBall();
+}
+
+dom.pause.addEventListener('click', function() {
+  dom.overlay.classList.remove('hidden');
+  gameRunning = false;
+});
+
+dom.resume.addEventListener('click', function() {
+  dom.overlay.classList.add('hidden');
+  gameRunning = true;
+  if (!ballAttached) requestAnimationFrame(gameLoop);
+});
+
+dom.restart.addEventListener('click', reset);
+dom.win.querySelector('.restart-btn').addEventListener('click', reset);
+dom.gameover.querySelector('.restart-btn').addEventListener('click', reset);

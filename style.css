@@ -106,8 +106,29 @@ body {
     border-radius: 5px;
 }
 
-/* FIX: overlay must allow clicks */
-#pause-overlay {
+/* HUD */
+#hud {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 40px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 8px #00d4ff;
+    z-index: 50;
+    letter-spacing: 2px;
+}
+
+#score-display { color: #00ffcc; }
+#lives-display { color: #ff5252; }
+
+/* overlay base */
+#pause-overlay,
+#win-overlay,
+#gameover-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -122,7 +143,34 @@ body {
     z-index: 200;
 }
 
-/* FIX: allow clicking buttons */
+#win-overlay {
+    background: rgba(0, 0, 0, 0.85);
+}
+
+#gameover-overlay {
+    background: rgba(0, 0, 0, 0.85);
+}
+
+.win-title {
+    color: #ffd700;
+    font-size: 4rem;
+    text-shadow: 0 0 20px #ffd700, 3px 3px 0px #ff0066;
+}
+
+.gameover-title {
+    color: #ff1744;
+    font-size: 4rem;
+    text-shadow: 0 0 20px #ff1744, 3px 3px 0px #620000;
+}
+
+.final-score {
+    font-size: 2rem;
+    margin: 20px 0;
+    color: #fff;
+    text-shadow: 0 0 10px #00d4ff;
+}
+
+/* allow clicking buttons */
 .overlay-content {
     pointer-events: auto;
 }
@@ -133,26 +181,40 @@ body {
 }
 
 /* Resume / Restart */
-.resume-btn{
-    padding: 10px 20px;
-    background: #00ffcc;
-    color: #222;
+.resume-btn,
+.restart-btn {
     border: none;
-    font-family: 'Arial', sans-serif;
+    padding: 15px 50px;
+    color: white;
+    font-size: 1.5rem;
     font-weight: bold;
-    border-radius: 5px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.3s;
     margin-top: 20px;
 }
 
-.restart-btn{
-    padding: 10px 20px;
-    background: #ff4400;
-    color: #fff;
-    border: none;
-    font-family: 'Arial', sans-serif;
-    font-weight: bold;
-    border-radius: 5px;
-    margin-top: 20px;
+.resume-btn {
+    background: linear-gradient(180deg, #00e676 0%, #00695c 100%);
+    box-shadow: 0 4px 0 #004d40;
+}
+
+.resume-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #00e676;
+}
+
+.restart-btn {
+    background: linear-gradient(180deg, #ff5252 0%, #b71c1c 100%);
+    box-shadow: 0 4px 0 #7f0000;
+}
+
+.restart-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #ff5252;
+}
+
+.restart-btn + .restart-btn {
     margin-left: 20px;
 }
 
@@ -203,18 +265,7 @@ body {
     border-radius: 10px;
 }
 
-/* FIX: PADDLE must be inside game */
-#paddle {
-    position: absolute;
-    bottom: 20px;
-    width: 250px;
-    height: 18px;
-    background: linear-gradient(to bottom, #555, #222);
-    border-radius: 10px;
-    border: 2px solid #111;
-}
-
-/* FIX: PADDLE - Anchored to bottom-left, moved via GPU */
+/* PADDLE - Anchored to bottom-left, moved via GPU */
 #paddle {
     position: absolute;
     bottom: 20px;  /* Fixed distance from bottom */
@@ -228,15 +279,15 @@ body {
     transform: translateX(325px); /* Centers it initially (900/2 - 250/2) */
 }
 
-/* FIX: BALL - Anchored to bottom-left, moved via GPU */
+/* BALL - Anchored to top-left, moved via GPU */
 #ball {
     position: absolute;
-    bottom: 0;     /* Base vertical starting line */
-    left: 0;       /* Base horizontal starting line */
+    top: 0;
+    left: 0;
     width: 20px;
     height: 20px;
     background-color: #ffffff;
     border-radius: 50%;
     box-shadow: 0 0 10px #ffffff, 0 0 20px #00ffff;
-    will-change: transform; /* Optimizes compositing layers */
+    will-change: transform;
 }
