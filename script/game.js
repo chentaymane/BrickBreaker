@@ -29,47 +29,51 @@ let ballDy = 5;
 let score = 0;
 let lives = 3;
 
-const W = 900, H = 600, BORDER = 4;
-const CW = W - BORDER * 2, CH = H - BORDER * 2;
-const PW = 250, PH = 18, BS = 20;
-const ROWS = 6, COLS = 8, SPD = 3;
+const WIDTH = 900, HEIGHT = 600, BORDER = 4;
+const CONTENT_WIDTH = WIDTH - BORDER * 2, CONTENT_HEIGHT = HEIGHT - BORDER * 2;
+const PADDLE_WIDTH = 250, PADDLE_HEIGHT = 18, BALL_SIZE = 20;
+const ROWS = 6, COLUMNS = 8, SPEED = 3;
 
+// Axis-aligned bounding box collision check
 function aabb(a, b) {
   return a.right > b.left && a.left < b.right && a.bottom > b.top && a.top < b.bottom;
 }
 
+// Update score and lives display
 function updateHUD() {
   dom.scoreEl.textContent = `SCORE: ${score}`;
   dom.livesEl.textContent = `LIVES: ${lives}`;
 }
 
+// Reset ball on paddle ready to launch
 function attachBall() {
   ballAttached = true;
-  paddleX = (CW - PW) / 2;
-  ballX = paddleX + PW / 2 - BS / 2;
-  ballY = CH - 20 - PH - BS;
-  ballDx = SPD;
-  ballDy = -SPD;
+  paddleX = (CONTENT_WIDTH - PADDLE_WIDTH) / 2;
+  ballX = paddleX + PADDLE_WIDTH / 2 - BALL_SIZE / 2;
+  ballY = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;
+  ballDx = SPEED;
+  ballDy = -SPEED;
   paddle.style.transform = `translateX(${paddleX}px)`;
   ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
 }
 
+// Create bricks, paddle, ball and start the game
 function init() {
   dom.game.innerHTML = '';
 
-  let bc = document.createElement('div');
-  bc.className = 'bricks-container';
+  let bricksContainer = document.createElement('div');
+  bricksContainer.className = 'bricks-container';
   for (let r = 0; r < ROWS; r++) {
     let row = document.createElement('div');
     row.className = 'brick-row';
-    for (let i = 0; i < COLS; i++) {
-      let b = document.createElement('div');
-      b.className = `brick ${r % 2 ? 'yellow' : 'red'}`;
-      row.appendChild(b);
+    for (let i = 0; i < COLUMNS; i++) {
+      let brick = document.createElement('div');
+      brick.className = `brick ${r % 2 ? 'yellow' : 'red'}`;
+      row.appendChild(brick);
     }
-    bc.appendChild(row);
+    bricksContainer.appendChild(row);
   }
-  dom.game.appendChild(bc);
+  dom.game.appendChild(bricksContainer);
   bricks = [...document.querySelectorAll('.brick')];
 
   paddle = document.createElement('div');
@@ -87,6 +91,7 @@ function init() {
   gameRunning = true;
 }
 
+// Return to menu and clear the game
 function reset() {
   dom.game.innerHTML = '';
   dom.menu.style.display = '';
@@ -100,6 +105,7 @@ function reset() {
   gameRunning = false;
 }
 
+// Start button: show game and initialize
 dom.start.addEventListener('click', function() {
   dom.menu.style.display = 'none';
   dom.pause.hidden = false;
@@ -108,6 +114,7 @@ dom.start.addEventListener('click', function() {
   init();
 });
 
+// Click on game area launches the ball
 dom.game.addEventListener('click', function() {
   if (ballAttached && gameRunning) {
     ballAttached = false;
@@ -115,36 +122,38 @@ dom.game.addEventListener('click', function() {
   }
 });
 
+// Mouse controls the paddle position
 document.addEventListener('mousemove', function(e) {
   if (!paddle || !gameRunning) return;
 
   let rect = dom.game.getBoundingClientRect();
-  paddleX = Math.max(0, Math.min(e.clientX - rect.left - BORDER - PW / 2, CW - PW));
+  paddleX = Math.max(0, Math.min(e.clientX - rect.left - BORDER - PADDLE_WIDTH / 2, CONTENT_WIDTH - PADDLE_WIDTH));
   paddle.style.transform = `translateX(${paddleX}px)`;
 
   if (ballAttached && ball) {
-    ballX = paddleX + PW / 2 - BS / 2;
+    ballX = paddleX + PADDLE_WIDTH / 2 - BALL_SIZE / 2;
     ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
   }
 });
 
+// Main game loop running at 60fps via requestAnimationFrame
 function gameLoop() {
   if (ballAttached || !gameRunning) return;
 
   ballX += ballDx;
   ballY += ballDy;
 
-  if (ballX <= 0 || ballX >= CW - BS) ballDx = -ballDx;
+  if (ballX <= 0 || ballX >= CONTENT_WIDTH - BALL_SIZE) ballDx = -ballDx;
   if (ballY <= 0) ballDy = -ballDy;
-  if (ballY >= CH - BS) { loseBall(); return; }
+  if (ballY >= CONTENT_HEIGHT - BALL_SIZE) { loseBall(); return; }
 
-  let br = ball.getBoundingClientRect();
+  let ballRect = ball.getBoundingClientRect();
 
-  for (let b of bricks) {
-    if (b.style.visibility === 'hidden') continue;
-    let r = b.getBoundingClientRect();
-    if (aabb(br, r)) {
-      b.style.visibility = 'hidden';
+  for (let brick of bricks) {
+    if (brick.style.visibility === 'hidden') continue;
+    let brickRect = brick.getBoundingClientRect();
+    if (aabb(ballRect, brickRect)) {
+      brick.style.visibility = 'hidden';
       score += 10;
       updateHUD();
       if (bricks.every(x => x.style.visibility === 'hidden')) {
@@ -153,23 +162,24 @@ function gameLoop() {
         dom.win.classList.remove('hidden');
         return;
       }
-      let overlapX = Math.min(br.right - r.left, r.right - br.left);
-      let overlapY = Math.min(br.bottom - r.top, r.bottom - br.top);
+      let overlapX = Math.min(ballRect.right - brickRect.left, brickRect.right - ballRect.left);
+      let overlapY = Math.min(ballRect.bottom - brickRect.top, brickRect.bottom - ballRect.top);
       if (overlapX < overlapY) { ballDx = -ballDx; ballX += ballDx; }
       else                     { ballDy = -ballDy; ballY += ballDy; }
       break;
     }
   }
 
-  if (aabb(br, paddle.getBoundingClientRect())) {
-    ballDy = -SPD;
-    ballY = CH - 20 - PH - BS;
+  if (aabb(ballRect, paddle.getBoundingClientRect())) {
+    ballDy = -SPEED;
+    ballY = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;
   }
 
   ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
   requestAnimationFrame(gameLoop);
 }
 
+// Decrement lives, game over if none left, otherwise respawn
 function loseBall() {
   lives--;
   if (lives <= 0) {
@@ -182,11 +192,13 @@ function loseBall() {
   attachBall();
 }
 
+// Toggle pause overlay and stop the loop
 dom.pause.addEventListener('click', function() {
   dom.overlay.classList.remove('hidden');
   gameRunning = false;
 });
 
+// Resume: hide overlay and restart the loop
 dom.resume.addEventListener('click', function() {
   dom.overlay.classList.add('hidden');
   gameRunning = true;
