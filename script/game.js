@@ -1,39 +1,3 @@
-const $ = s => document.querySelector(s);
-const dom = {
-  resume: $('.resume-btn'),
-  restart: $('.restart-btn'),
-  pause: $('#pause-btn'),
-  overlay: $('#pause-overlay'),
-  win: $('#win-overlay'),
-  gameover: $('#gameover-overlay'),
-  menu: $('#menu-container'),
-  start: $('.start-button'),
-  game: $('#game-container'),
-  hud: $('#hud'),
-  scoreEl: $('#score-display'),
-  livesEl: $('#lives-display'),
-  winScore: $('#win-score'),
-  gameoverScore: $('#gameover-score')
-};
-
-let paddle = null;
-let ball = null;
-let bricks = [];
-let ballAttached = true;
-let gameRunning = false;
-let paddleX = 325;
-let ballX = 440;
-let ballY = 38;
-let ballDx = 5;
-let ballDy = 5;
-let score = 0;
-let lives = 3;
-
-const WIDTH = 900, HEIGHT = 600, BORDER = 4;
-const CONTENT_WIDTH = WIDTH - BORDER * 2, CONTENT_HEIGHT = HEIGHT - BORDER * 2;
-const PADDLE_WIDTH = 250, PADDLE_HEIGHT = 18, BALL_SIZE = 20;
-const ROWS = 6, COLUMNS = 8, SPEED = 3;
-
 // Axis-aligned bounding box collision check
 function aabb(a, b) {
   return a.right > b.left && a.left < b.right && a.bottom > b.top && a.top < b.bottom;
@@ -105,37 +69,6 @@ function reset() {
   gameRunning = false;
 }
 
-// Start button: show game and initialize
-dom.start.addEventListener('click', function() {
-  dom.menu.style.display = 'none';
-  dom.pause.hidden = false;
-  dom.hud.classList.remove('hidden');
-  dom.game.classList.remove('hidden');
-  init();
-});
-
-// Click on game area launches the ball
-dom.game.addEventListener('click', function() {
-  if (ballAttached && gameRunning) {
-    ballAttached = false;
-    requestAnimationFrame(gameLoop);
-  }
-});
-
-// Mouse controls the paddle position
-document.addEventListener('mousemove', function(e) {
-  if (!paddle || !gameRunning) return;
-
-  let rect = dom.game.getBoundingClientRect();
-  paddleX = Math.max(0, Math.min(e.clientX - rect.left - BORDER - PADDLE_WIDTH / 2, CONTENT_WIDTH - PADDLE_WIDTH));
-  paddle.style.transform = `translateX(${paddleX}px)`;
-
-  if (ballAttached && ball) {
-    ballX = paddleX + PADDLE_WIDTH / 2 - BALL_SIZE / 2;
-    ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
-  }
-});
-
 // Main game loop running at 60fps via requestAnimationFrame
 function gameLoop() {
   if (ballAttached || !gameRunning) return;
@@ -191,20 +124,3 @@ function loseBall() {
   updateHUD();
   attachBall();
 }
-
-// Toggle pause overlay and stop the loop
-dom.pause.addEventListener('click', function() {
-  dom.overlay.classList.remove('hidden');
-  gameRunning = false;
-});
-
-// Resume: hide overlay and restart the loop
-dom.resume.addEventListener('click', function() {
-  dom.overlay.classList.add('hidden');
-  gameRunning = true;
-  if (!ballAttached) requestAnimationFrame(gameLoop);
-});
-
-dom.restart.addEventListener('click', reset);
-dom.win.querySelector('.restart-btn').addEventListener('click', reset);
-dom.gameover.querySelector('.restart-btn').addEventListener('click', reset);
