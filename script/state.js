@@ -1,3 +1,4 @@
+const keys = {};
 let paddle = null;
 let ball = null;
 let bricks = [];

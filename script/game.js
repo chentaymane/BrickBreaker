@@ -53,6 +53,7 @@ function init() {
   updateHUD();
   attachBall();
   gameRunning = true;
+  requestAnimationFrame(gameLoop);
 }
 
 // Return to menu and clear the game
@@ -71,45 +72,69 @@ function reset() {
 
 // Main game loop running at 60fps via requestAnimationFrame
 function gameLoop() {
-  if (ballAttached || !gameRunning) return;
+  if (!gameRunning) return;
 
-  ballX += ballDx;
-  ballY += ballDy;
-
-  if (ballX <= 0 || ballX >= CONTENT_WIDTH - BALL_SIZE) ballDx = -ballDx;
-  if (ballY <= 0) ballDy = -ballDy;
-  if (ballY >= CONTENT_HEIGHT - BALL_SIZE) { loseBall(); return; }
-
-  let ballRect = ball.getBoundingClientRect();
-
-  for (let brick of bricks) {
-    if (brick.style.visibility === 'hidden') continue;
-    let brickRect = brick.getBoundingClientRect();
-    if (aabb(ballRect, brickRect)) {
-      brick.style.visibility = 'hidden';
-      score += 10;
-      updateHUD();
-      if (bricks.every(x => x.style.visibility === 'hidden')) {
-        gameRunning = false;
-        dom.winScore.textContent = `SCORE: ${score}`;
-        dom.win.classList.remove('hidden');
-        return;
-      }
-      let overlapX = Math.min(ballRect.right - brickRect.left, brickRect.right - ballRect.left);
-      let overlapY = Math.min(ballRect.bottom - brickRect.top, brickRect.bottom - ballRect.top);
-      if (overlapX < overlapY) { ballDx = -ballDx; ballX += ballDx; }
-      else                     { ballDy = -ballDy; ballY += ballDy; }
-      break;
+  // Keyboard paddle movement (works whether ball is attached or not)
+  if ((keys['ArrowLeft'] || keys['a']) && paddle) {
+    paddleX = Math.max(0, paddleX - PADDLE_SPEED);
+    paddle.style.transform = `translateX(${paddleX}px)`;
+    if (ballAttached && ball) {
+      ballX = paddleX + PADDLE_WIDTH / 2 - BALL_SIZE / 2;
+      ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
+    }
+  }
+  if ((keys['ArrowRight'] || keys['d']) && paddle) {
+    paddleX = Math.min(CONTENT_WIDTH - PADDLE_WIDTH, paddleX + PADDLE_SPEED);
+    paddle.style.transform = `translateX(${paddleX}px)`;
+    if (ballAttached && ball) {
+      ballX = paddleX + PADDLE_WIDTH / 2 - BALL_SIZE / 2;
+      ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
     }
   }
 
-  if (aabb(ballRect, paddle.getBoundingClientRect())) {
-    ballDy = -SPEED;
-    ballY = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;
+  if (!ballAttached) {
+    ballX += ballDx;
+    ballY += ballDy;
+
+    if (ballX <= 0 || ballX >= CONTENT_WIDTH - BALL_SIZE) ballDx = -ballDx;
+    if (ballY <= 0) ballDy = -ballDy;
+
+    if (ballY >= CONTENT_HEIGHT - BALL_SIZE) {
+      loseBall();
+    } else {
+      let ballRect = ball.getBoundingClientRect();
+
+      for (let brick of bricks) {
+        if (brick.style.visibility === 'hidden') continue;
+        let brickRect = brick.getBoundingClientRect();
+        if (aabb(ballRect, brickRect)) {
+          brick.style.visibility = 'hidden';
+          score += 10;
+          updateHUD();
+          if (bricks.every(x => x.style.visibility === 'hidden')) {
+            gameRunning = false;
+            dom.winScore.textContent = `SCORE: ${score}`;
+            dom.win.classList.remove('hidden');
+            return;
+          }
+          let overlapX = Math.min(ballRect.right - brickRect.left, brickRect.right - ballRect.left);
+          let overlapY = Math.min(ballRect.bottom - brickRect.top, brickRect.bottom - ballRect.top);
+          if (overlapX < overlapY) { ballDx = -ballDx; ballX += ballDx; }
+          else                     { ballDy = -ballDy; ballY += ballDy; }
+          break;
+        }
+      }
+
+      if (aabb(ballRect, paddle.getBoundingClientRect())) {
+        ballDy = -SPEED;
+        ballY = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;
+      }
+
+      ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
+    }
   }
 
-  ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
-  requestAnimationFrame(gameLoop);
+  if (gameRunning) requestAnimationFrame(gameLoop);
 }
 
 // Decrement lives, game over if none left, otherwise respawn

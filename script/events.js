@@ -11,8 +11,20 @@ dom.start.addEventListener('click', function() {
 dom.game.addEventListener('click', function() {
   if (ballAttached && gameRunning) {
     ballAttached = false;
-    requestAnimationFrame(gameLoop);
   }
+});
+
+// Space launches the ball; Arrow/WASD tracked for paddle movement
+document.addEventListener('keydown', function(e) {
+  keys[e.key] = true;
+  if (['ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
+  if (e.key === ' ' && ballAttached && gameRunning) {
+    ballAttached = false;
+  }
+});
+
+document.addEventListener('keyup', function(e) {
+  keys[e.key] = false;
 });
 
 // Mouse controls the paddle position
@@ -39,7 +51,7 @@ dom.pause.addEventListener('click', function() {
 dom.resume.addEventListener('click', function() {
   dom.overlay.classList.add('hidden');
   gameRunning = true;
-  if (!ballAttached) requestAnimationFrame(gameLoop);
+  requestAnimationFrame(gameLoop);
 });
 
 dom.restart.addEventListener('click', reset);
