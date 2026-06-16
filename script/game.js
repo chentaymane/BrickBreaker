@@ -38,8 +38,8 @@ function attachBall() {
 function dropPowerup(brickRect) {
   if (Math.random() > POWERUP_CHANCE) return;
   let gameRect = dom.game.getBoundingClientRect();
-  let px = brickRect.left - gameRect.left + (brickRect.width - POWERUP_SIZE) / 2;
-  let py = brickRect.top - gameRect.top;
+  let px = brickRect.left - gameRect.left - BORDER + (brickRect.width - POWERUP_SIZE) / 2;
+  let py = brickRect.top - gameRect.top - BORDER;
   let type = Math.random() < 0.5 ? 'multi' : 'fire';
   let el = document.createElement('div');
   el.className = `powerup ${type}`;

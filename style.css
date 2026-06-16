@@ -309,23 +309,25 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    width: 28px;
-    height: 16px;
-    border-radius: 8px;
-    font-size: 10px;
+    width: 40px;
+    height: 22px;
+    border-radius: 11px;
+    font-size: 11px;
     font-weight: bold;
     color: #fff;
     text-align: center;
-    line-height: 16px;
+    line-height: 22px;
+    letter-spacing: 0.5px;
     will-change: transform;
+    border: 2px solid rgba(255,255,255,0.4);
 }
 
 .powerup.multi {
     background: #2277ff;
-    box-shadow: 0 0 8px #2277ff;
+    box-shadow: 0 0 10px #2277ff, 0 0 20px #2277ff88;
 }
 
 .powerup.fire {
     background: #ff5500;
-    box-shadow: 0 0 8px #ff5500;
+    box-shadow: 0 0 10px #ff5500, 0 0 20px #ff550088;
 }
