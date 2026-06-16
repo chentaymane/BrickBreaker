@@ -11,3 +11,4 @@ let ballDx = 5;
 let ballDy = 5;
 let score = 0;
 let lives = 3;
+let paddleWidth = PADDLE_WIDTH;

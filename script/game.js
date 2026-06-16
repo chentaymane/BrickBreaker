@@ -12,11 +12,12 @@ function updateHUD() {
 // Reset ball on paddle ready to launch
 function attachBall() {
   ballAttached = true;
-  paddleX = (CONTENT_WIDTH - PADDLE_WIDTH) / 2;
-  ballX = paddleX + PADDLE_WIDTH / 2 - BALL_SIZE / 2;
+  paddleX = (CONTENT_WIDTH - paddleWidth) / 2;
+  ballX = paddleX + paddleWidth / 2 - BALL_SIZE / 2;
   ballY = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;
   ballDx = SPEED;
   ballDy = -SPEED;
+  paddle.style.width = paddleWidth + 'px';
   paddle.style.transform = `translateX(${paddleX}px)`;
   ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
 }
@@ -50,6 +51,7 @@ function init() {
 
   score = 0;
   lives = 3;
+  paddleWidth = PADDLE_WIDTH;
   updateHUD();
   attachBall();
   gameRunning = true;
@@ -79,15 +81,15 @@ function gameLoop() {
     paddleX = Math.max(0, paddleX - PADDLE_SPEED);
     paddle.style.transform = `translateX(${paddleX}px)`;
     if (ballAttached && ball) {
-      ballX = paddleX + PADDLE_WIDTH / 2 - BALL_SIZE / 2;
+      ballX = paddleX + paddleWidth / 2 - BALL_SIZE / 2;
       ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
     }
   }
   if ((keys['ArrowRight'] || keys['d']) && paddle) {
-    paddleX = Math.min(CONTENT_WIDTH - PADDLE_WIDTH, paddleX + PADDLE_SPEED);
+    paddleX = Math.min(CONTENT_WIDTH - paddleWidth, paddleX + PADDLE_SPEED);
     paddle.style.transform = `translateX(${paddleX}px)`;
     if (ballAttached && ball) {
-      ballX = paddleX + PADDLE_WIDTH / 2 - BALL_SIZE / 2;
+      ballX = paddleX + paddleWidth / 2 - BALL_SIZE / 2;
       ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
     }
   }
@@ -146,6 +148,7 @@ function loseBall() {
     gameRunning = false;
     return;
   }
+  paddleWidth = Math.max(60, paddleWidth - 60);
   updateHUD();
   attachBall();
 }
