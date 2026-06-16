@@ -286,7 +286,7 @@ body {
 }
 
 /* BALL - Anchored to top-left, moved via GPU */
-#ball {
+.ball {
     position: absolute;
     top: 0;
     left: 0;
@@ -296,4 +296,35 @@ body {
     border-radius: 50%;
     box-shadow: 0 0 10px #ffffff, 0 0 20px #00ffff;
     will-change: transform;
+}
+
+.ball.fire {
+    background-color: #ff6600;
+    box-shadow: 0 0 10px #ff6600, 0 0 24px #ff2200;
+}
+
+/* POWER-UPS */
+.powerup {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 28px;
+    height: 16px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+    line-height: 16px;
+    will-change: transform;
+}
+
+.powerup.multi {
+    background: #2277ff;
+    box-shadow: 0 0 8px #2277ff;
+}
+
+.powerup.fire {
+    background: #ff5500;
+    box-shadow: 0 0 8px #ff5500;
 }
