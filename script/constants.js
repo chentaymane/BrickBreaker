@@ -24,7 +24,21 @@ const PADDLE_WIDTH = 250, PADDLE_HEIGHT = 18, BALL_SIZE = 20;
 const ROWS = 6, COLUMNS = 8, SPEED = 5, PADDLE_SPEED = 10;
 const POWERUP_SIZE = 24, POWERUP_SPEED = 2, POWERUP_CHANCE = 0.08, POWERUP_DURATION = 360;
 
-// 5 levels — each is a 6×8 grid (1 = brick, 0 = empty)
+// Two brick colors per level (even rows, odd rows)
+const LEVEL_COLORS = [
+  ['red',    'yellow'],
+  ['red',    'yellow'],
+  ['blue',   'cyan'  ],
+  ['blue',   'cyan'  ],
+  ['green',  'purple'],
+  ['green',  'purple'],
+  ['orange', 'yellow'],
+  ['pink',   'blue'  ],
+  ['purple', 'cyan'  ],
+  ['red',    'orange'],
+];
+
+// 10 levels — each is a 6×8 grid (1 = brick, 0 = empty)
 const LEVELS = [
   // Level 1 — Pyramid
   [
@@ -62,7 +76,52 @@ const LEVELS = [
     [1,0,1,0,1,0,1,0],
     [0,1,0,1,0,1,0,1],
   ],
-  // Level 5 — Full grid
+  // Level 5 — Arrow up
+  [
+    [0,0,0,1,1,0,0,0],
+    [0,0,1,1,1,1,0,0],
+    [0,1,1,1,1,1,1,0],
+    [1,1,1,1,1,1,1,1],
+    [0,0,0,1,1,0,0,0],
+    [0,0,0,1,1,0,0,0],
+  ],
+  // Level 6 — Castle
+  [
+    [1,0,1,0,1,0,1,0],
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1],
+    [0,1,1,1,1,1,1,0],
+    [0,0,1,1,1,1,0,0],
+    [0,0,0,0,0,0,0,0],
+  ],
+  // Level 7 — H shape
+  [
+    [1,1,0,0,0,0,1,1],
+    [1,1,0,0,0,0,1,1],
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1],
+    [1,1,0,0,0,0,1,1],
+    [1,1,0,0,0,0,1,1],
+  ],
+  // Level 8 — Spiral frame
+  [
+    [1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,0,1],
+    [1,0,1,1,1,1,0,1],
+    [1,0,1,0,0,1,0,1],
+    [1,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1],
+  ],
+  // Level 9 — Two triangles
+  [
+    [1,1,1,1,1,1,1,1],
+    [0,1,1,1,1,1,1,0],
+    [0,0,1,1,1,1,0,0],
+    [0,0,1,1,1,1,0,0],
+    [0,1,1,1,1,1,1,0],
+    [1,1,1,1,1,1,1,1],
+  ],
+  // Level 10 — Full grid
   [
     [1,1,1,1,1,1,1,1],
     [1,1,1,1,1,1,1,1],

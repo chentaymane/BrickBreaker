@@ -43,7 +43,7 @@ function dropPowerup(brickRect) {
   let type = Math.random() < 0.5 ? 'multi' : 'fire';
   let el = document.createElement('div');
   el.className = `powerup ${type}`;
-  el.textContent = type === 'multi' ? '✕3' : '🔥';
+  el.textContent = type === 'multi' ? 'x3' : 'fire';
   dom.game.appendChild(el);
   el.style.transform = `translate(${px}px, ${py}px)`;
   powerups.push({ el, x: px, y: py, type });
@@ -52,11 +52,12 @@ function dropPowerup(brickRect) {
 function applyPowerup(type) {
   if (type === 'multi') {
     let b = balls[0];
+    if (!b) return;
     [-0.5, 0.5].forEach(offset => {
-      let mag = Math.sqrt((b.dx + offset * ballSpeed) ** 2 + b.dy ** 2);
-      let ndx = (b.dx + offset * ballSpeed) / mag * ballSpeed;
-      let ndy = b.dy / mag * ballSpeed;
-      balls.push(spawnBall(b.x, b.y, ndx, ndy));
+      let ndx = b.dx + offset * ballSpeed;
+      let ndy = b.dy;
+      let mag = Math.sqrt(ndx * ndx + ndy * ndy) || 1;
+      balls.push(spawnBall(b.x, b.y, ndx / mag * ballSpeed, ndy / mag * ballSpeed));
     });
   } else if (type === 'fire') {
     throughBall = true;
@@ -65,7 +66,8 @@ function applyPowerup(type) {
   }
 }
 
-function init() {
+// Per-level setup — score and lives carry over between levels
+function initLevel() {
   dom.game.innerHTML = '';
   balls = [];
   powerups = [];
@@ -73,7 +75,8 @@ function init() {
   throughTimer = 0;
 
   let layout = LEVELS[level - 1];
-  ballSpeed = SPEED + (level - 1);
+  let colors = LEVEL_COLORS[level - 1];
+  ballSpeed = SPEED + Math.floor((level - 1) / 2);
 
   let bricksContainer = document.createElement('div');
   bricksContainer.className = 'bricks-container';
@@ -82,7 +85,7 @@ function init() {
     row.className = 'brick-row';
     for (let i = 0; i < COLUMNS; i++) {
       let el = document.createElement('div');
-      el.className = layout[r][i] ? `brick ${r % 2 ? 'yellow' : 'red'}` : 'brick-gap';
+      el.className = layout[r][i] ? `brick ${r % 2 ? colors[1] : colors[0]}` : 'brick-gap';
       row.appendChild(el);
     }
     bricksContainer.appendChild(row);
@@ -94,13 +97,19 @@ function init() {
   paddle.id = 'paddle';
   dom.game.appendChild(paddle);
 
-  score = 0;
-  lives = 3;
   paddleWidth = PADDLE_WIDTH;
   updateHUD();
   attachBall();
   gameRunning = true;
   requestAnimationFrame(gameLoop);
+}
+
+// Full game reset — resets score, lives and level
+function init() {
+  score = 0;
+  lives = 3;
+  level = 1;
+  initLevel();
 }
 
 function reset() {
@@ -143,7 +152,7 @@ function gameLoop() {
   }
 
   if (!ballAttached) {
-    // Through-ball timer countdown
+    // Fireball timer
     if (throughBall) {
       throughTimer--;
       if (throughTimer <= 0) {
@@ -152,7 +161,7 @@ function gameLoop() {
       }
     }
 
-    // Move and check power-ups
+    // Power-ups fall and get caught
     let paddleRect = paddle.getBoundingClientRect();
     let removedPowerups = [];
     for (let p of powerups) {
@@ -165,10 +174,10 @@ function gameLoop() {
         removedPowerups.push(p);
       }
     }
-    removedPowerups.forEach(p => { p.el.remove(); });
+    removedPowerups.forEach(p => p.el.remove());
     powerups = powerups.filter(p => !removedPowerups.includes(p));
 
-    // Move and check balls
+    // Move balls
     let deadBalls = [];
     for (let b of balls) {
       b.x += b.dx;
@@ -198,8 +207,10 @@ function gameLoop() {
         dropPowerup(brickRect);
 
         if (bricks.every(x => x.style.visibility === 'hidden')) {
-          if (level < LEVELS.length) { level++; init(); }
-          else {
+          if (level < LEVELS.length) {
+            level++;
+            initLevel();
+          } else {
             gameRunning = false;
             dom.winScore.textContent = `SCORE: ${score}`;
             dom.win.classList.remove('hidden');
@@ -215,7 +226,7 @@ function gameLoop() {
           bounced = true;
           break;
         }
-        // throughBall: keep looping — break through all bricks in path
+        // throughBall: continue through all bricks in path
       }
 
       // Paddle collision

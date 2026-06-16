@@ -251,13 +251,14 @@ body {
         inset -2px -2px 6px rgba(0,0,0,0.4);
 }
 
-.red {
-    background: linear-gradient(to bottom, #ff3b3b, #a80000);
-}
-
-.yellow {
-    background: linear-gradient(to bottom, #ffe44d, #c99700);
-}
+.red    { background: linear-gradient(to bottom, #ff3b3b, #a80000); }
+.yellow { background: linear-gradient(to bottom, #ffe44d, #c99700); }
+.blue   { background: linear-gradient(to bottom, #3b8bff, #0044aa); }
+.cyan   { background: linear-gradient(to bottom, #00e5ff, #007999); }
+.green  { background: linear-gradient(to bottom, #44dd44, #007700); }
+.purple { background: linear-gradient(to bottom, #cc44ff, #660099); }
+.orange { background: linear-gradient(to bottom, #ff9933, #cc5500); }
+.pink   { background: linear-gradient(to bottom, #ff66aa, #cc0066); }
 
 /* FIX: GAME SCREEN (you forgot hidden control) */
 #game-container {
