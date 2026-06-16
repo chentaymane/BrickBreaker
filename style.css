@@ -235,6 +235,12 @@ body {
     justify-content: center;
 }
 
+.brick-gap {
+    width: 85px;
+    height: 30px;
+    visibility: hidden;
+}
+
 .brick {
     width: 85px;
     height: 30px;

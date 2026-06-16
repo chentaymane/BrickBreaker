@@ -3,8 +3,9 @@ function aabb(a, b) {
   return a.right > b.left && a.left < b.right && a.bottom > b.top && a.top < b.bottom;
 }
 
-// Update score and lives display
+// Update score, lives and level display
 function updateHUD() {
+  dom.levelEl.textContent = `LEVEL: ${level}`;
   dom.scoreEl.textContent = `SCORE: ${score}`;
   dom.livesEl.textContent = `LIVES: ${lives}`;
 }
@@ -15,8 +16,8 @@ function attachBall() {
   paddleX = (CONTENT_WIDTH - paddleWidth) / 2;
   ballX = paddleX + paddleWidth / 2 - BALL_SIZE / 2;
   ballY = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;
-  ballDx = SPEED;
-  ballDy = -SPEED;
+  ballDx = ballSpeed;
+  ballDy = -ballSpeed;
   paddle.style.width = paddleWidth + 'px';
   paddle.style.transform = `translateX(${paddleX}px)`;
   ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
@@ -26,15 +27,18 @@ function attachBall() {
 function init() {
   dom.game.innerHTML = '';
 
+  let layout = LEVELS[level - 1];
+  ballSpeed = SPEED + (level - 1);
+
   let bricksContainer = document.createElement('div');
   bricksContainer.className = 'bricks-container';
   for (let r = 0; r < ROWS; r++) {
     let row = document.createElement('div');
     row.className = 'brick-row';
     for (let i = 0; i < COLUMNS; i++) {
-      let brick = document.createElement('div');
-      brick.className = `brick ${r % 2 ? 'yellow' : 'red'}`;
-      row.appendChild(brick);
+      let el = document.createElement('div');
+      el.className = layout[r][i] ? `brick ${r % 2 ? 'yellow' : 'red'}` : 'brick-gap';
+      row.appendChild(el);
     }
     bricksContainer.appendChild(row);
   }
@@ -70,6 +74,7 @@ function reset() {
   dom.game.classList.add('hidden');
   ballAttached = true;
   gameRunning = false;
+  level = 1;
 }
 
 // Main game loop running at 60fps via requestAnimationFrame
@@ -114,9 +119,14 @@ function gameLoop() {
           score += 10;
           updateHUD();
           if (bricks.every(x => x.style.visibility === 'hidden')) {
-            gameRunning = false;
-            dom.winScore.textContent = `SCORE: ${score}`;
-            dom.win.classList.remove('hidden');
+            if (level < LEVELS.length) {
+              level++;
+              init();
+            } else {
+              gameRunning = false;
+              dom.winScore.textContent = `SCORE: ${score}`;
+              dom.win.classList.remove('hidden');
+            }
             return;
           }
           let overlapX = Math.min(ballRect.right - brickRect.left, brickRect.right - ballRect.left);
@@ -128,7 +138,7 @@ function gameLoop() {
       }
 
       if (aabb(ballRect, paddle.getBoundingClientRect())) {
-        ballDy = -SPEED;
+        ballDy = -ballSpeed;
         ballY = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;
       }
 
