@@ -21,7 +21,7 @@ const dom = {
 const WIDTH = 900, HEIGHT = 600, BORDER = 4;
 const CONTENT_WIDTH = WIDTH - BORDER * 2, CONTENT_HEIGHT = HEIGHT - BORDER * 2;
 const PADDLE_WIDTH = 250, PADDLE_HEIGHT = 18, BALL_SIZE = 20;
-const ROWS = 6, COLUMNS = 8, SPEED = 3, PADDLE_SPEED = 6;
+const ROWS = 6, COLUMNS = 8, SPEED = 3, PADDLE_SPEED = 10;
 
 // 5 levels — each is a 6×8 grid (1 = brick, 0 = empty)
 const LEVELS = [
