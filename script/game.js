@@ -51,15 +51,13 @@ function dropPowerup(brickRect) {
 
 function applyPowerup(type) {
   if (type === 'multi') {
-    let existing = [...balls];
-    for (let b of existing) {
-      [-0.5, 0.5].forEach(offset => {
-        let mag = Math.sqrt((b.dx + offset * ballSpeed) ** 2 + b.dy ** 2);
-        let ndx = (b.dx + offset * ballSpeed) / mag * ballSpeed;
-        let ndy = b.dy / mag * ballSpeed;
-        balls.push(spawnBall(b.x, b.y, ndx, ndy));
-      });
-    }
+    let b = balls[0];
+    [-0.5, 0.5].forEach(offset => {
+      let mag = Math.sqrt((b.dx + offset * ballSpeed) ** 2 + b.dy ** 2);
+      let ndx = (b.dx + offset * ballSpeed) / mag * ballSpeed;
+      let ndy = b.dy / mag * ballSpeed;
+      balls.push(spawnBall(b.x, b.y, ndx, ndy));
+    });
   } else if (type === 'fire') {
     throughBall = true;
     throughTimer = POWERUP_DURATION;
