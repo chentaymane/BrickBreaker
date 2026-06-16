@@ -16,7 +16,7 @@ function attachBall() {
   paddleX = (CONTENT_WIDTH - paddleWidth) / 2;
   ballX = paddleX + paddleWidth / 2 - BALL_SIZE / 2;
   ballY = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;
-  ballDx = ballSpeed;
+  ballDx = 0;
   ballDy = -ballSpeed;
   paddle.style.width = paddleWidth + 'px';
   paddle.style.transform = `translateX(${paddleX}px)`;
@@ -109,6 +109,7 @@ function gameLoop() {
     if (ballY >= CONTENT_HEIGHT - BALL_SIZE) {
       loseBall();
     } else {
+      ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
       let ballRect = ball.getBoundingClientRect();
 
       for (let brick of bricks) {
@@ -138,11 +139,13 @@ function gameLoop() {
       }
 
       if (aabb(ballRect, paddle.getBoundingClientRect())) {
-        ballDy = -ballSpeed;
+        let hitOffset = (ballX + BALL_SIZE / 2) - (paddleX + paddleWidth / 2);
+        let angle = (hitOffset / (paddleWidth / 2)) * (Math.PI / 4);
+        ballDx = Math.sin(angle) * ballSpeed;
+        ballDy = -Math.cos(angle) * ballSpeed;
         ballY = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;
+        ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
       }
-
-      ball.style.transform = `translate(${ballX}px, ${ballY}px)`;
     }
   }
 
