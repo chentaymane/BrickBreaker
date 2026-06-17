@@ -29,6 +29,7 @@ function attachBall() {
   paddleX = (CONTENT_WIDTH - paddleWidth) / 2;
   paddle.style.width = paddleWidth + 'px';
   paddle.style.transform = `translateX(${paddleX}px)`;
+  paddle.classList.remove('paddle-fire', 'paddle-multi');
 
   let x = paddleX + paddleWidth / 2 - BALL_SIZE / 2;
   let y = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;
@@ -59,10 +60,14 @@ function applyPowerup(type) {
       let mag = Math.sqrt(ndx * ndx + ndy * ndy) || 1;
       balls.push(spawnBall(b.x, b.y, ndx / mag * ballSpeed, ndy / mag * ballSpeed));
     });
+    paddle.classList.remove('paddle-fire');
+    paddle.classList.add('paddle-multi');
   } else if (type === 'fire') {
     throughBall = true;
     throughTimer = POWERUP_DURATION;
     balls.forEach(b => b.el.classList.add('fire'));
+    paddle.classList.remove('paddle-multi');
+    paddle.classList.add('paddle-fire');
   }
 }
 
@@ -158,6 +163,7 @@ function gameLoop() {
       if (throughTimer <= 0) {
         throughBall = false;
         balls.forEach(b => b.el.classList.remove('fire'));
+        paddle.classList.remove('paddle-fire');
       }
     }
 
