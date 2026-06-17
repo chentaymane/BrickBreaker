@@ -377,21 +377,15 @@ body {
 .powerup {
     position: absolute;
     top: 0; left: 0;
-    width: 40px;
-    height: 22px;
-    border-radius: 11px;
-    font-size: 10px;
-    font-weight: 900;
-    font-family: 'Arial Black', sans-serif;
-    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 20px;
     text-align: center;
-    line-height: 22px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
+    line-height: 36px;
     will-change: transform;
     animation: powerup-fall 0.6s ease-in-out infinite;
-    border: 1.5px solid rgba(255,255,255,0.35);
-    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    border: 1.5px solid rgba(255,255,255,0.3);
 }
 
 .powerup.multi {

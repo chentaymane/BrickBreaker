@@ -44,7 +44,7 @@ function dropPowerup(brickRect) {
   let type = Math.random() < 0.5 ? 'multi' : 'fire';
   let el = document.createElement('div');
   el.className = `powerup ${type}`;
-  el.textContent = type === 'multi' ? 'x3' : 'fire';
+  el.textContent = type === 'multi' ? '⚡' : '🔥';
   dom.game.appendChild(el);
   el.style.transform = `translate(${px}px, ${py}px)`;
   powerups.push({ el, x: px, y: py, type });
