@@ -5,6 +5,8 @@ function aabb(a, b) {
 function updateHUD() {
   dom.levelEl.textContent = `LEVEL: ${level}`;
   dom.scoreEl.textContent = `SCORE: ${score}`;
+  dom.timerEl.textContent = `TIME: ${timeLeft}`;
+  dom.timerEl.classList.toggle('timer-urgent', timeLeft <= 10);
   dom.livesEl.textContent = `LIVES: ${lives}`;
 }
 
@@ -78,6 +80,9 @@ function initLevel() {
   powerups = [];
   throughBall = false;
   throughTimer = 0;
+  timeLeft = LEVEL_TIME;
+  timerAccum = 0;
+  lastFrameTime = 0;
 
   let layout = LEVELS[level - 1];
   let colors = LEVEL_COLORS[level - 1];
@@ -133,10 +138,35 @@ function reset() {
   level = 1;
   throughBall = false;
   throughTimer = 0;
+  timeLeft = LEVEL_TIME;
+  timerAccum = 0;
+  lastFrameTime = 0;
 }
 
-function gameLoop() {
+function gameLoop(timestamp) {
   if (!gameRunning) return;
+
+  // Countdown timer (only ticks while ball is in play)
+  if (!ballAttached) {
+    if (lastFrameTime === 0) lastFrameTime = timestamp;
+    let dt = Math.min(timestamp - lastFrameTime, 50);
+    lastFrameTime = timestamp;
+    timerAccum += dt;
+    if (timerAccum >= 1000) {
+      timerAccum -= 1000;
+      timeLeft = Math.max(0, timeLeft - 1);
+      updateHUD();
+      if (timeLeft <= 0) {
+        timeLeft = LEVEL_TIME;
+        timerAccum = 0;
+        lastFrameTime = 0;
+        loseBall();
+        return;
+      }
+    }
+  } else {
+    lastFrameTime = 0;
+  }
 
   // Paddle movement
   if ((keys['ArrowLeft'] || keys['a']) && paddle) {

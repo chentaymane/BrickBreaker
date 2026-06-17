@@ -13,3 +13,6 @@ let ballSpeed = SPEED;
 let paddleWidth = PADDLE_WIDTH;
 let throughBall = false;
 let throughTimer = 0;
+let timeLeft = LEVEL_TIME;
+let timerAccum = 0;
+let lastFrameTime = 0;

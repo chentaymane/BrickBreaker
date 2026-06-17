@@ -24,6 +24,7 @@ document.addEventListener('keyup', function(e) {
 dom.pause.addEventListener('click', function() {
   dom.overlay.classList.remove('hidden');
   gameRunning = false;
+  lastFrameTime = 0;
 });
 
 // Resume: hide overlay and restart the loop

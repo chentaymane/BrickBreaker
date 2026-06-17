@@ -13,6 +13,7 @@ const dom = {
   hud: $('#hud'),
   levelEl: $('#level-display'),
   scoreEl: $('#score-display'),
+  timerEl: $('#timer-display'),
   livesEl: $('#lives-display'),
   winScore: $('#win-score'),
   gameoverScore: $('#gameover-score')
@@ -22,6 +23,7 @@ const WIDTH = 900, HEIGHT = 600, BORDER = 4;
 const CONTENT_WIDTH = WIDTH - BORDER * 2, CONTENT_HEIGHT = HEIGHT - BORDER * 2;
 const PADDLE_WIDTH = 250, PADDLE_HEIGHT = 18, BALL_SIZE = 20;
 const ROWS = 6, COLUMNS = 8, SPEED = 5, PADDLE_SPEED = 10;
+const LEVEL_TIME = 60;
 const POWERUP_SIZE = 36, POWERUP_SPEED = 2, POWERUP_CHANCE = 0.30, POWERUP_DURATION = 360;
 
 // Two brick colors per level (even rows, odd rows)
