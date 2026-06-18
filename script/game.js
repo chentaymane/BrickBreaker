@@ -181,6 +181,7 @@ function gameLoop(timestamp) {
                 timerAccum = 0;
                 lastFrameTime = 0;
                 loseBall();
+                if (gameRunning) requestAnimationFrame(gameLoop);
                 return;
             }
         }
