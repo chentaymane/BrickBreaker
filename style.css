@@ -173,11 +173,12 @@ body {
     top: 20px;
     left: 20px;
     z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-#pause-btn,
-#music-btn,
-#effect-btn {
+#pause-btn {
     background: transparent;
     border: 1px solid rgba(0, 240, 255, 0.35);
     color: rgba(0, 240, 255, 0.7);
@@ -192,12 +193,38 @@ body {
     transition: all 0.2s;
 }
 
-#pause-btn:hover,
-#music-btn:hover,
-#effect-btn:hover {
+#pause-btn:hover {
     border-color: #00f0ff;
     color: #00f0ff;
     box-shadow: 0 0 14px rgba(0, 240, 255, 0.3);
+}
+
+/* In-game icon buttons (music / sfx) */
+.icon-btn {
+    background: transparent;
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    color: rgba(0, 240, 255, 0.85);
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s;
+}
+
+.icon-btn:hover {
+    border-color: #00f0ff;
+    background: rgba(0, 240, 255, 0.08);
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.3);
+}
+
+.icon-btn.audio-off {
+    opacity: 0.3;
+    border-color: rgba(100, 100, 150, 0.3);
 }
 
 /* ─── Overlays ───────────────────────────────────────────── */
@@ -269,9 +296,7 @@ body {
 
 /* ─── Overlay Buttons ────────────────────────────────────── */
 .resume-btn,
-.restart-btn,
-.music-btn,
-.effect-btn {
+.restart-btn {
     background: transparent;
     padding: 12px 48px;
     font-size: 0.85rem;
@@ -293,21 +318,6 @@ body {
     transform: translateY(-2px);
 }
 
-.music-btn,
-.effect-btn {
-    border-color: #6f6df0;
-    color: #6f6df0;
-    box-shadow: 0 0 32px rgba(83, 89, 170, 0.5);
-}
-
-.music-btn:hover,
-.effect-btn:hover {
-    background: #6f6df0;
-    color: #ffffff;
-    box-shadow: 0 0 32px rgba(83, 89, 170, 0.5);
-    transform: translateY(-2px);
-}
-
 .restart-btn {
     border-color: #ff3366;
     color: #ff3366;
@@ -319,6 +329,63 @@ body {
     color: #ffffff;
     box-shadow: 0 0 32px rgba(255, 51, 102, 0.5);
     transform: translateY(-2px);
+}
+
+/* ─── Audio row in pause overlay ─────────────────────────── */
+.audio-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.audio-toggle {
+    background: transparent;
+    border: 1px solid rgba(111, 109, 240, 0.5);
+    color: #6f6df0;
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 14px rgba(111, 109, 240, 0.2);
+}
+
+.audio-toggle svg {
+    font-size: 1.8rem;
+    width: 1.8rem;
+    height: 1.8rem;
+}
+
+.audio-toggle .audio-label {
+    font-size: 0.48rem;
+    letter-spacing: 2px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.audio-toggle:hover {
+    background: rgba(111, 109, 240, 0.12);
+    border-color: #6f6df0;
+    box-shadow: 0 0 28px rgba(111, 109, 240, 0.45);
+    transform: translateY(-2px);
+}
+
+.audio-toggle.audio-off {
+    opacity: 0.3;
+    border-color: rgba(100, 100, 150, 0.3);
+    box-shadow: none;
+}
+
+.audio-toggle.audio-off:hover {
+    opacity: 0.55;
+    transform: none;
+    box-shadow: none;
 }
 
 .win {

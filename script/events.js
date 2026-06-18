@@ -10,6 +10,14 @@ dom.start.addEventListener("click", function () {
     init();
 });
 
+function syncMusicBtns() {
+    dom.music.forEach((btn) => btn.classList.toggle("audio-off", theme.paused));
+}
+
+function syncEffectBtns() {
+    dom.effects.forEach((btn) => btn.classList.toggle("audio-off", boom.muted));
+}
+
 // Music and Effects buttons
 dom.music.forEach((elem) => {
     elem.addEventListener("click", () => {
@@ -18,33 +26,20 @@ dom.music.forEach((elem) => {
         } else {
             theme.pause();
         }
+        syncMusicBtns();
     });
 });
 
 dom.effects.forEach((elem) => {
     elem.addEventListener("click", () => {
-        if (
-            boom.muted &&
-            eat.muted &&
-            gameover.muted &&
-            impact.muted &&
-            lose.muted &&
-            win.muted
-        ) {
-            boom.muted = false;
-            eat.muted = false;
-            gameover.muted = false;
-            impact.muted = false;
-            lose.muted = false;
-            win.muted = false;
-        } else {
-            boom.muted = true;
-            eat.muted = true;
-            gameover.muted = true;
-            impact.muted = true;
-            lose.muted = true;
-            win.muted = true;
-        }
+        const shouldMute = !boom.muted;
+        boom.muted = shouldMute;
+        eat.muted = shouldMute;
+        gameover.muted = shouldMute;
+        impact.muted = shouldMute;
+        lose.muted = shouldMute;
+        win.muted = shouldMute;
+        syncEffectBtns();
     });
 });
 
