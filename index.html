@@ -32,10 +32,14 @@
 
         <div class="pause-container">
             <button id="pause-btn" hidden>PAUSE</button>
+            <button class="musical" id="music-btn">MUSIC</button>
+            <button class="effects" id="effect-btn">EFFECTS</button>
 
             <div id="pause-overlay" class="hidden">
                 <div class="overlay-content">
                     <h2>PAUSED</h2>
+                    <button class="effect-btn effects">EFFECTS</button>
+                    <button class="music-btn musical">MUSIC</button>
                     <button class="resume-btn">RESUME</button>
                     <button class="restart-btn">RESTART</button>
                 </div>
@@ -46,7 +50,7 @@
             <div class="overlay-content">
                 <h2 class="win-title">YOU WIN!</h2>
                 <p id="win-score" class="final-score">SCORE: 0</p>
-                <button class="restart-btn">PLAY AGAIN</button>
+                <button class="restart-btn win">PLAY AGAIN</button>
             </div>
         </div>
 

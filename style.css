@@ -8,8 +8,10 @@
 /* ─── Background canvas (persistent 60fps loop) ─────────── */
 #bg-canvas {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: -1;
     pointer-events: none;
 }
@@ -21,7 +23,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-family: 'Arial Black', 'Arial Bold', sans-serif;
+    font-family: "Arial Black", "Arial Bold", sans-serif;
     background: #06061a;
     overflow: hidden;
 }
@@ -29,7 +31,9 @@ body {
 /* ─── HUD ────────────────────────────────────────────────── */
 #hud {
     position: fixed;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     display: flex;
     justify-content: center;
     gap: 60px;
@@ -42,14 +46,34 @@ body {
     z-index: 50;
 }
 
-#level-display { color: #00f0ff; text-shadow: 0 0 10px #00f0ff; }
-#score-display { color: #00ffaa; text-shadow: 0 0 10px #00ffaa; }
-#timer-display { color: #ffd700; text-shadow: 0 0 10px #ffd700; transition: color 0.3s, text-shadow 0.3s; }
-#lives-display { color: #ff3366; text-shadow: 0 0 10px #ff3366; }
+#level-display {
+    color: #00f0ff;
+    text-shadow: 0 0 10px #00f0ff;
+}
+#score-display {
+    color: #00ffaa;
+    text-shadow: 0 0 10px #00ffaa;
+}
+#timer-display {
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700;
+    transition:
+        color 0.3s,
+        text-shadow 0.3s;
+}
+#lives-display {
+    color: #ff3366;
+    text-shadow: 0 0 10px #ff3366;
+}
 
 @keyframes timer-blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.3; }
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
 }
 #timer-display.timer-urgent {
     color: #ff3366;
@@ -67,7 +91,7 @@ body {
     box-shadow:
         0 0 60px rgba(0, 240, 255, 0.1),
         0 0 120px rgba(255, 0, 170, 0.06),
-        inset 0 1px 0 rgba(255,255,255,0.05);
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(20px);
     z-index: 10;
 }
@@ -97,7 +121,9 @@ body {
     height: 16px;
     background: #ffffff;
     border-radius: 50%;
-    box-shadow: 0 0 14px #00f0ff, 0 0 30px rgba(0,240,255,0.4);
+    box-shadow:
+        0 0 14px #00f0ff,
+        0 0 30px rgba(0, 240, 255, 0.4);
 }
 
 .mini-paddle {
@@ -149,12 +175,14 @@ body {
     z-index: 100;
 }
 
-#pause-btn {
+#pause-btn,
+#music-btn,
+#effect-btn {
     background: transparent;
     border: 1px solid rgba(0, 240, 255, 0.35);
     color: rgba(0, 240, 255, 0.7);
     padding: 8px 18px;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     letter-spacing: 3px;
     cursor: pointer;
     border-radius: 3px;
@@ -164,7 +192,9 @@ body {
     transition: all 0.2s;
 }
 
-#pause-btn:hover {
+#pause-btn:hover,
+#music-btn:hover,
+#effect-btn:hover {
     border-color: #00f0ff;
     color: #00f0ff;
     box-shadow: 0 0 14px rgba(0, 240, 255, 0.3);
@@ -175,7 +205,8 @@ body {
 #win-overlay,
 #gameover-overlay {
     position: fixed;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
     background: rgba(6, 6, 26, 0.82);
@@ -212,7 +243,9 @@ body {
     color: #ffd700;
     font-size: 2.4rem;
     letter-spacing: 8px;
-    text-shadow: 0 0 24px #ffd700, 0 0 48px rgba(255, 215, 0, 0.3);
+    text-shadow:
+        0 0 24px #ffd700,
+        0 0 48px rgba(255, 215, 0, 0.3);
     text-transform: uppercase;
 }
 
@@ -220,7 +253,9 @@ body {
     color: #ff3366;
     font-size: 2.4rem;
     letter-spacing: 8px;
-    text-shadow: 0 0 24px #ff3366, 0 0 48px rgba(255, 51, 102, 0.3);
+    text-shadow:
+        0 0 24px #ff3366,
+        0 0 48px rgba(255, 51, 102, 0.3);
     text-transform: uppercase;
 }
 
@@ -234,7 +269,9 @@ body {
 
 /* ─── Overlay Buttons ────────────────────────────────────── */
 .resume-btn,
-.restart-btn {
+.restart-btn,
+.music-btn,
+.effect-btn {
     background: transparent;
     padding: 12px 48px;
     font-size: 0.85rem;
@@ -256,6 +293,21 @@ body {
     transform: translateY(-2px);
 }
 
+.music-btn,
+.effect-btn {
+    border-color: #6f6df0;
+    color: #6f6df0;
+    box-shadow: 0 0 32px rgba(83, 89, 170, 0.5);
+}
+
+.music-btn:hover,
+.effect-btn:hover {
+    background: #6f6df0;
+    color: #ffffff;
+    box-shadow: 0 0 32px rgba(83, 89, 170, 0.5);
+    transform: translateY(-2px);
+}
+
 .restart-btn {
     border-color: #ff3366;
     color: #ff3366;
@@ -269,8 +321,23 @@ body {
     transform: translateY(-2px);
 }
 
+.win {
+    border: 2px solid #00ffaa;
+    color: #00ffaa;
+    box-shadow: 0 0 16px rgba(0, 255, 170, 0.15);
+}
+
+.win:hover {
+    background: #00ffaa;
+    color: #ffffff;
+    box-shadow: 0 0 16px rgba(0, 255, 170, 0.15);
+    transform: translateY(-2px);
+}
+
 /* ─── Hidden ─────────────────────────────────────────────── */
-.hidden { display: none !important; }
+.hidden {
+    display: none !important;
+}
 
 /* ─── Game Container ─────────────────────────────────────── */
 #game-container {
@@ -319,14 +386,38 @@ body {
     transition: opacity 0.1s;
 }
 
-.red    { background: linear-gradient(to bottom, #ff2244, #990022); box-shadow: 0 0 8px rgba(255,34,68,0.6);   }
-.yellow { background: linear-gradient(to bottom, #ffdd00, #997700); box-shadow: 0 0 8px rgba(255,221,0,0.6);   }
-.blue   { background: linear-gradient(to bottom, #0077ff, #003388); box-shadow: 0 0 8px rgba(0,119,255,0.6);   }
-.cyan   { background: linear-gradient(to bottom, #00ddff, #005577); box-shadow: 0 0 8px rgba(0,221,255,0.6);   }
-.green  { background: linear-gradient(to bottom, #00ff88, #006633); box-shadow: 0 0 8px rgba(0,255,136,0.6);   }
-.purple { background: linear-gradient(to bottom, #bb00ff, #550088); box-shadow: 0 0 8px rgba(187,0,255,0.6);   }
-.orange { background: linear-gradient(to bottom, #ff8800, #993300); box-shadow: 0 0 8px rgba(255,136,0,0.6);   }
-.pink   { background: linear-gradient(to bottom, #ff0099, #880044); box-shadow: 0 0 8px rgba(255,0,153,0.6);   }
+.red {
+    background: linear-gradient(to bottom, #ff2244, #990022);
+    box-shadow: 0 0 8px rgba(255, 34, 68, 0.6);
+}
+.yellow {
+    background: linear-gradient(to bottom, #ffdd00, #997700);
+    box-shadow: 0 0 8px rgba(255, 221, 0, 0.6);
+}
+.blue {
+    background: linear-gradient(to bottom, #0077ff, #003388);
+    box-shadow: 0 0 8px rgba(0, 119, 255, 0.6);
+}
+.cyan {
+    background: linear-gradient(to bottom, #00ddff, #005577);
+    box-shadow: 0 0 8px rgba(0, 221, 255, 0.6);
+}
+.green {
+    background: linear-gradient(to bottom, #00ff88, #006633);
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+}
+.purple {
+    background: linear-gradient(to bottom, #bb00ff, #550088);
+    box-shadow: 0 0 8px rgba(187, 0, 255, 0.6);
+}
+.orange {
+    background: linear-gradient(to bottom, #ff8800, #993300);
+    box-shadow: 0 0 8px rgba(255, 136, 0, 0.6);
+}
+.pink {
+    background: linear-gradient(to bottom, #ff0099, #880044);
+    box-shadow: 0 0 8px rgba(255, 0, 153, 0.6);
+}
 
 /* ─── Paddle ─────────────────────────────────────────────── */
 #paddle {
@@ -338,56 +429,83 @@ body {
     background: linear-gradient(to right, #cccccc, #ffffff, #cccccc);
     border-radius: 7px;
     box-shadow:
-        0 0 14px rgba(255,255,255,0.8),
-        0 0 28px rgba(255,255,255,0.3),
-        0 2px 6px rgba(0,0,0,0.6);
+        0 0 14px rgba(255, 255, 255, 0.8),
+        0 0 28px rgba(255, 255, 255, 0.3),
+        0 2px 6px rgba(0, 0, 0, 0.6);
     will-change: transform;
     transform: translateX(325px);
-    transition: background 0.3s, box-shadow 0.3s;
+    transition:
+        background 0.3s,
+        box-shadow 0.3s;
 }
 
 #paddle.paddle-multi {
-    background: linear-gradient(to right, #0044cc, #4499ff, #00ccff, #4499ff, #0044cc);
+    background: linear-gradient(
+        to right,
+        #0044cc,
+        #4499ff,
+        #00ccff,
+        #4499ff,
+        #0044cc
+    );
     box-shadow:
         0 0 18px #4499ff,
-        0 0 36px rgba(68,153,255,0.5),
-        0 2px 6px rgba(0,0,0,0.6);
+        0 0 36px rgba(68, 153, 255, 0.5),
+        0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
 #paddle.paddle-fire {
-    background: linear-gradient(to right, #cc2200, #ff6600, #ffcc00, #ff6600, #cc2200);
+    background: linear-gradient(
+        to right,
+        #cc2200,
+        #ff6600,
+        #ffcc00,
+        #ff6600,
+        #cc2200
+    );
     box-shadow:
         0 0 18px #ff6600,
-        0 0 36px rgba(255,102,0,0.5),
-        0 2px 6px rgba(0,0,0,0.6);
+        0 0 36px rgba(255, 102, 0, 0.5),
+        0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
 /* ─── Ball ───────────────────────────────────────────────── */
 .ball {
     position: absolute;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
     width: 20px;
     height: 20px;
     background: radial-gradient(circle at 35% 35%, #ffffff, #aaeeff);
     border-radius: 50%;
-    box-shadow: 0 0 10px #ffffff, 0 0 22px #00f0ff;
+    box-shadow:
+        0 0 10px #ffffff,
+        0 0 22px #00f0ff;
     will-change: transform;
 }
 
 .ball.fire {
     background: radial-gradient(circle at 35% 35%, #ffee44, #ff4400);
-    box-shadow: 0 0 12px #ff6600, 0 0 28px rgba(255, 100, 0, 0.6);
+    box-shadow:
+        0 0 12px #ff6600,
+        0 0 28px rgba(255, 100, 0, 0.6);
 }
 
 /* ─── Power-ups ──────────────────────────────────────────── */
 @keyframes powerup-fall {
-    0%, 100% { filter: brightness(1); }
-    50%       { filter: brightness(1.4); }
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.4);
+    }
 }
 
 .powerup {
     position: absolute;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
     width: 36px;
     height: 36px;
     border-radius: 8px;
@@ -396,21 +514,21 @@ body {
     line-height: 36px;
     will-change: transform;
     animation: powerup-fall 0.6s ease-in-out infinite;
-    border: 1.5px solid rgba(255,255,255,0.3);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
 }
 
 .powerup.multi {
     background: linear-gradient(135deg, #1a6fff, #00ccff);
     box-shadow:
         0 0 14px #1a6fff,
-        0 0 28px rgba(26,111,255,0.45),
-        inset 0 1px 0 rgba(255,255,255,0.25);
+        0 0 28px rgba(26, 111, 255, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .powerup.fire {
     background: linear-gradient(135deg, #ff3300, #ffaa00);
     box-shadow:
         0 0 14px #ff5500,
-        0 0 28px rgba(255,85,0,0.45),
-        inset 0 1px 0 rgba(255,255,255,0.25);
+        0 0 28px rgba(255, 85, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }

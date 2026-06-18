@@ -270,6 +270,8 @@ function gameLoop(timestamp) {
                         win.play();
                         initLevel();
                     } else {
+                        win.currentTime = 0;
+                        win.play();
                         gameRunning = false;
                         dom.winScore.textContent = `SCORE: ${score}`;
                         dom.win.classList.remove("hidden");
