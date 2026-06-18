@@ -157,13 +157,70 @@ body {
     transform: translateY(-2px);
 }
 
-.controls-hint {
-    margin-top: 24px;
-    color: rgba(255, 255, 255, 0.25);
-    font-size: 0.7rem;
-    letter-spacing: 4px;
+/* ─── Tutorial ───────────────────────────────────────────── */
+.tutorial {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 240, 255, 0.1);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+}
+
+.tut-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 14px;
+}
+
+.tut-sep {
+    width: 1px;
+    height: 20px;
+    background: rgba(0, 240, 255, 0.12);
+}
+
+.tut-keys {
+    display: flex;
+    gap: 3px;
+}
+
+kbd {
+    background: transparent;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    color: rgba(0, 240, 255, 0.55);
+    border-radius: 4px;
+    padding: 3px 7px;
     font-family: Arial, sans-serif;
-    font-weight: normal;
+    font-size: 0.62rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    min-width: 24px;
+    text-align: center;
+    box-shadow: 0 2px 0 rgba(0, 240, 255, 0.12);
+}
+
+.key-wide {
+    min-width: 60px;
+    letter-spacing: 2px;
+}
+
+.tut-icon {
+    width: 14px;
+    height: 14px;
+    color: rgba(0, 240, 255, 0.55);
+    flex-shrink: 0;
+}
+
+.tut-label {
+    color: rgba(255, 255, 255, 0.28);
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
     text-transform: uppercase;
 }
 
@@ -576,9 +633,10 @@ body {
     width: 36px;
     height: 36px;
     border-radius: 8px;
-    font-size: 20px;
-    text-align: center;
-    line-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
     will-change: transform;
     animation: powerup-fall 0.6s ease-in-out infinite;
     border: 1.5px solid rgba(255, 255, 255, 0.3);

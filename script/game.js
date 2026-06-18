@@ -55,7 +55,10 @@ function dropPowerup(brickRect) {
     let type = Math.random() < 0.5 ? "multi" : "fire";
     let el = document.createElement("div");
     el.className = `powerup ${type}`;
-    el.textContent = type === "multi" ? "⚡" : "🔥";
+    el.innerHTML =
+        type === "multi"
+            ? `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>`
+            : `<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>`;
     dom.game.appendChild(el);
     el.style.transform = `translate(${px}px, ${py}px)`;
     powerups.push({ el, x: px, y: py, type });
