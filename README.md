@@ -2,6 +2,9 @@
 
 A neon arcade brick breaker built with vanilla HTML, CSS, and JavaScript — no dependencies, no build step.
 
+> 📚 **Want to understand how the code works?** See the [`docs/`](docs/README.md) folder —
+> a full from-zero explanation of every file, function, and calculation in the game.
+
 ## How to Play
 
 Open `index.html` in any browser. That's it.
