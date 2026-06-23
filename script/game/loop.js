@@ -147,7 +147,7 @@ function moveBalls() {
             let hitPos = (b.x + BALL_SIZE / 2 - paddleX) / paddleWidth;
             b.dx = (hitPos - 0.5) * 2 * ballSpeed;
             b.dy = -ballSpeed;
-            b.y = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;
+            b.y = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE ;
             b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
         }
     }

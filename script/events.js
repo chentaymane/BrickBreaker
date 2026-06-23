@@ -61,11 +61,5 @@ dom.resume.addEventListener("click", function () {
     requestAnimationFrame(gameLoop);
 });
 
-dom.restart.addEventListener("click", () => { clicked.currentTime = 0; clicked.play(); reset(); });
-tListener("click", () => {
-    clicked.currentTime = 0;
-    clicked.play();
-    reset();
-});
 dom.win.querySelector(".restart-btn").addEventListener("click", reset);
 dom.gameover.querySelector(".restart-btn").addEventListener("click", reset);
