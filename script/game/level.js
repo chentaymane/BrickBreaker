@@ -19,7 +19,7 @@ function initLevel() {
 
     let layout = LEVELS[level - 1];
     let colors = LEVEL_COLORS[level - 1];
-    ballSpeed = SPEED + Math.floor((level - 1) / 2);
+    ballSpeed = SPEED + level;
 
     let bricksContainer = document.createElement("div");
     bricksContainer.className = "bricks-container";
@@ -28,9 +28,15 @@ function initLevel() {
         row.className = "brick-row";
         for (let i = 0; i < COLUMNS; i++) {
             let el = document.createElement("div");
-            el.className = layout[r][i]
-                ? `brick ${r % 2 ? colors[1] : colors[0]}`
-                : "brick-gap";
+            if (layout[r][i] === 1) {
+                if (r % 2 === 1) {
+                el.className = `brick ${colors[1]}`;
+                    }else {
+                el.className = `brick ${colors[0]}`;
+                }
+            } else {
+                el.className = "brick-gap";
+            }
             row.appendChild(el);
         }
         bricksContainer.appendChild(row);

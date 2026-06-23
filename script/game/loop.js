@@ -11,20 +11,59 @@ function gameLoop(timestamp) {
 }
 
 function updateTimer(timestamp) {
-    if (ballAttached) { lastFrameTime = 0; return; }
-    if (lastFrameTime === 0) lastFrameTime = timestamp;
-    timerAccum += Math.min(timestamp - lastFrameTime, 50);
+
+    // dont count if ball is on paddle
+    if (ballAttached) {
+        lastFrameTime = 0;
+        return;
+    }
+
+    // first frame after ball launches - save start time
+    if (lastFrameTime === 0) {
+        lastFrameTime = timestamp;
+    }
+
+    // how many ms passed since last frame
+    let msPassed = timestamp - lastFrameTime;
+
+    // save current time for next frame
     lastFrameTime = timestamp;
-    if (timerAccum < 1000) return;
-    timerAccum -= 1000;
-    timeLeft = Math.max(0, timeLeft - 1);
+
+    // cap at 50ms to prevent tab switching bug
+    if (msPassed > 50) {
+        msPassed = 50;
+    }
+
+    // add ms to accumulator
+    timerAccum = timerAccum + msPassed;
+
+    // not 1 second yet - wait
+    if (timerAccum < 1000) {
+        return;
+    }
+
+    // 1 second passed - empty the jar
+    timerAccum = 0;
+
+    // subtract 1 from timer
+    timeLeft = timeLeft - 1;
+
+    // never go below 0
+    if (timeLeft < 0) {
+        timeLeft = 0;
+    }
+
+    // update screen
     updateHUD();
-    if (timeLeft <= 0) {
-        timeLeft = LEVEL_TIME; timerAccum = 0; lastFrameTime = 0;
+
+    // timer ran out - lose a life
+    if (timeLeft === 0) {
+        timeLeft = LEVEL_TIME;
+        timerAccum = 0;
+        lastFrameTime = 0;
         loseBall();
     }
 }
-
 function movePaddle() {
     if (!paddle) return;
     if (keys["ArrowLeft"]  || keys["a"]) paddleX = Math.max(0, paddleX - PADDLE_SPEED);
