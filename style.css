@@ -36,16 +36,17 @@ body {
 #level-display {
     color: #00f0ff;
     text-shadow: 0 0 10px #00f0ff;
-    animation: titleFloat 4s ease-in-out infinite;
-
+    animation: livesPulse 2s ease-in-out infinite;
 }
 #score-display {
     color: #00ffaa;
     text-shadow: 0 0 10px #00ffaa;
+    animation: livesPulse 2s ease-in-out infinite;
 }
 #timer-display {
     color: #ffd700;
     text-shadow: 0 0 10px #ffd700;
+    animation: livesPulse 2s ease-in-out infinite;
     transition:
         color 0.3s,
         text-shadow 0.3s;
@@ -53,6 +54,18 @@ body {
 #lives-display {
     color: #ff3366;
     text-shadow: 0 0 10px #ff3366;
+    animation: livesPulse 2s ease-in-out infinite;
+}
+
+@keyframes livesPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.95;
+        transform: scale(1.01);
+    }
 }
 
 @keyframes timer-blink {
