@@ -36,7 +36,7 @@ Power-ups drop randomly when bricks are broken.
 
 ## Levels
 
-10 levels with unique brick layouts (pyramid, diamond, X, checkerboard, castle…). Ball speed increases every 2 levels. Score and lives carry over between levels.
+10 levels with unique brick layouts (pyramid, diamond, X, checkerboard, castle…). Ball speed increases every level. Score and lives carry over between levels.
 
 ## Scoring
 
@@ -60,10 +60,17 @@ BrickBreaker/
 │   ├── select.mp3
 │   └── click.mp3
 └── script/
-    ├── background.js  # Animated canvas background
-    ├── constants.js   # DOM refs, game constants, level layouts
-    ├── state.js       # Mutable game state
-    ├── game.js        # Core loop, collision, power-ups
-    ├── sounds.js      # Audio setup
-    └── events.js      # Input and UI event listeners
+    ├── background.js       # Canvas background (solid fill)
+    ├── events.js           # Input and UI event listeners
+    ├── core/
+    │   ├── constants.js    # DOM refs, game constants, level layouts
+    │   └── state.js        # Mutable game state
+    ├── audio/
+    │   └── sounds.js       # Audio setup
+    └── game/
+        ├── collision.js    # aabb() rectangle overlap test
+        ├── ball.js         # spawnBall(), attachBall()
+        ├── powerup.js      # dropPowerup(), applyPowerup()
+        ├── level.js        # updateHUD(), initLevel(), init(), reset()
+        └── loop.js         # gameLoop() and per-frame helper functions
 ```

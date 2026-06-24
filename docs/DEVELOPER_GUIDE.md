@@ -280,91 +280,47 @@ error into the console.
 
 ---
 
-## 7. `background.js` — the particle background (the only real canvas)
+## 7. `background.js` — the canvas background
 
-This whole file is wrapped in an **IIFE** — an Immediately Invoked Function Expression:
-
-```js
-(function () {
-   ... all the code ...
-})();
-```
-
-The `(function(){ ... })()` pattern defines a function and calls it instantly. Why? To
-keep its variables (`canvas`, `particles`, etc.) **private** — they don't leak into the
-global scope shared by the other scripts. It's a self-contained module.
-
-### How it works
+`background.js` sets up the `<canvas>` element that sits behind the entire game and keeps
+it filled with a solid dark colour.
 
 ```js
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 ```
 
-`canvas.getContext('2d')` gives you a **drawing context** — the toolbox of methods for
-painting on the canvas (`fillRect`, `arc`, `fill`, etc.).
-
-It makes 90 particle objects with random position, size, color, and velocity:
+`canvas.getContext('2d')` returns a **drawing context** — the toolbox for painting on the
+canvas (`fillRect`, `arc`, etc.).
 
 ```js
-const particles = Array.from({ length: COUNT }, () => ({
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
-    r: Math.random() * 2 + 0.5,              // radius
-    dx: (Math.random() - 0.5) * 0.3,         // slow horizontal drift
-    dy: -(Math.random() * 0.5 + 0.15),       // always drifting upward
-    color: COLORS[Math.floor(Math.random() * COLORS.length)],
-    alpha: Math.random() * 0.55 + 0.15,      // transparency
-}));
-```
-
-- `Array.from({ length: 90 }, fn)` — built-in that builds an array of 90 items, calling
-  `fn` for each. A neat way to generate N objects.
-- `Math.random()` — built-in returning a random decimal in `[0, 1)`.
-- `Math.floor(...)` — rounds down, used to pick a random array index.
-
-Then the animation loop:
-
-```js
-function loop() {
-    ctx.fillStyle = 'rgba(0, 0, 40, 0.18)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);   // semi-transparent wash
-
-    for (let p of particles) {
-        ctx.save();
-        ctx.globalAlpha = p.alpha;
-        ctx.shadowBlur = 10; ctx.shadowColor = p.color; // the neon glow
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);          // draw a circle
-        ctx.fill();
-        ctx.restore();
-
-        p.x += p.dx; p.y += p.dy;                        // move it
-
-        if (p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width; }
-        ...
-    }
-    requestAnimationFrame(loop);                         // schedule the next frame
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
-loop();
 ```
 
-Key built-ins:
-- `ctx.beginPath()` / `ctx.arc(x, y, radius, 0, Math.PI*2)` / `ctx.fill()` — the three
-  steps to draw a filled circle. `Math.PI * 2` radians = a full 360° circle.
-- `ctx.save()` / `ctx.restore()` — save the current drawing settings, then restore them
-  so per-particle changes (alpha, shadow) don't bleed into the next particle.
-- **The fade trick:** instead of fully clearing the screen each frame, it paints a
-  *barely* transparent dark rectangle over everything. Old particle positions don't
-  vanish instantly — they fade out, leaving a soft comet/trail effect.
-- `requestAnimationFrame(loop)` — **the most important built-in for animation.** It asks
-  the browser to call `loop` again right before the next screen repaint (~60 times per
-  second). Calling it at the end of `loop` creates a self-sustaining animation loop
-  that's smooth and pauses automatically when the tab is hidden.
+`resizeCanvas` is called once at startup and again whenever the browser window is resized
+(`window.addEventListener('resize', resizeCanvas)`), so the canvas always matches the
+window size exactly.
 
-When a particle floats off the top (`p.y < -10`), it's recycled to the bottom — so you
-never run out of particles.
+```js
+function drawBackground() {
+    ctx.fillStyle = '#000814';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    requestAnimationFrame(drawBackground);
+}
+drawBackground();
+```
+
+`drawBackground` fills the whole canvas with a single solid dark colour (`#000814`) each
+frame and reschedules itself with `requestAnimationFrame` — creating a continuous loop
+that keeps the background painted. Because the fill is opaque and covers the whole
+canvas, there is no fade or trail effect; it is simply a clean dark backdrop for the game.
+
+> **Note:** unlike the game scripts, `background.js` does **not** use an IIFE. `canvas`,
+> `ctx`, `resizeCanvas`, and `drawBackground` are all plain globals — they just don't
+> conflict with anything else because no other file uses those names.
 
 ---
 
@@ -402,7 +358,7 @@ function initLevel() {
 
     let layout = LEVELS[level - 1];        // pick this level's grid (arrays are 0-indexed)
     let colors = LEVEL_COLORS[level - 1];
-    ballSpeed = SPEED + Math.floor((level - 1) / 2);  // +1 speed every 2 levels
+    ballSpeed = SPEED + level;             // +1 speed every level
 ```
 
 `innerHTML = ""` is a quick way to delete all child elements of the game box.
@@ -611,14 +567,8 @@ function applyPowerup(type) {
     if (type === "multi") {
         let b = balls[0];
         if (!b) return;
-        [-0.5, 0.5].forEach((offset) => {
-            let ndx = b.dx + offset * ballSpeed;     // angle two new balls outward
-            let ndy = b.dy;
-            let mag = Math.sqrt(ndx * ndx + ndy * ndy) || 1;
-            balls.push(spawnBall(b.x, b.y,
-                (ndx / mag) * ballSpeed,             // normalize to keep constant speed
-                (ndy / mag) * ballSpeed));
-        });
+        balls.push(spawnBall(b.x, b.y, b.dx - ballSpeed / 2, b.dy));
+        balls.push(spawnBall(b.x, b.y, b.dx + ballSpeed / 2, b.dy));
         paddle.classList.remove("paddle-fire");
         paddle.classList.add("paddle-multi");
     } else if (type === "fire") {
@@ -631,11 +581,11 @@ function applyPowerup(type) {
 }
 ```
 
-**Multi-ball** spawns two extra balls based on the current ball, nudged left and right.
-The math `mag = sqrt(dx² + dy²)` is the **vector length** (Pythagoras); dividing each
-component by `mag` then multiplying by `ballSpeed` **normalizes** the velocity so all
-balls travel at exactly the intended speed regardless of angle. That's a classic
-game-dev technique: separate *direction* from *speed*.
+**Multi-ball** spawns two extra balls at the same position as the current ball. Their
+horizontal velocity is offset by `±ballSpeed / 2` to fan them out left and right;
+vertical velocity (`dy`) stays the same. The new balls may travel slightly faster or
+slower than `ballSpeed` depending on the angle of the original ball, but they'll fan
+visibly in different directions.
 
 **Fireball** sets `throughBall = true`, which (in the loop) lets the ball smash through
 bricks without bouncing, and starts a countdown `throughTimer`. It also adds CSS classes
@@ -645,235 +595,164 @@ so the ball and paddle glow orange.
 
 ## 11. `game/loop.js` — THE HEART OF THE GAME
 
-This file runs once per animation frame (~60×/sec) and does *everything*: moves the
-paddle, moves the balls, checks collisions, breaks bricks, handles power-ups, runs the
-countdown, and detects win/lose. Let's walk through `gameLoop(timestamp)` in order.
-
-`timestamp` is automatically passed in by `requestAnimationFrame` — it's the current
-time in milliseconds.
+The game loop has been split into several focused functions instead of one big function.
+`gameLoop` is now a thin coordinator that calls each helper in order:
 
 ```js
 function gameLoop(timestamp) {
-    if (!gameRunning) return;   // bail out if paused or game over (stops the loop)
-```
-
-If `gameRunning` is false, the function returns and does **not** schedule another frame
-— that's how pausing works: the loop just stops calling itself.
-
-### 11.1 The countdown timer
-
-```js
-    if (!ballAttached) {                    // only count down while ball is in play
-        if (lastFrameTime === 0) lastFrameTime = timestamp;
-        let dt = Math.min(timestamp - lastFrameTime, 50);  // ms since last frame
-        lastFrameTime = timestamp;
-        timerAccum += dt;
-        if (timerAccum >= 1000) {           // a full second has passed
-            timerAccum -= 1000;
-            timeLeft = Math.max(0, timeLeft - 1);
-            updateHUD();
-            if (timeLeft <= 0) {            // ran out of time → lose a ball
-                timeLeft = LEVEL_TIME; timerAccum = 0; lastFrameTime = 0;
-                loseBall();
-                if (gameRunning) requestAnimationFrame(gameLoop);
-                return;
-            }
-        }
-    } else {
-        lastFrameTime = 0;
+    if (!gameRunning) return;
+    updateTimer(timestamp);
+    movePaddle();
+    if (!ballAttached) {
+        tickFireball();
+        movePowerups();
+        if (moveBalls()) return;   // returns true when a level ended
     }
-```
-
-This is a **delta-time accumulator**. Frames don't arrive exactly evenly, so instead of
-assuming "60 frames = 1 second," it measures the real milliseconds between frames (`dt`),
-adds them up in `timerAccum`, and ticks `timeLeft` down by 1 whenever a full 1000 ms has
-accumulated. `Math.min(dt, 50)` caps the gap so that if you alt-tab away and come back,
-the timer doesn't suddenly jump down by many seconds. The timer only runs while the ball
-is launched (`!ballAttached`), so you're not penalized while aiming.
-
-### 11.2 Paddle movement
-
-```js
-    if ((keys["ArrowLeft"] || keys["a"]) && paddle) {
-        paddleX = Math.max(0, paddleX - PADDLE_SPEED);            // clamp at left wall
-        paddle.style.transform = `translateX(${paddleX}px)`;
-        if (ballAttached && balls[0]) {                          // ball rides the paddle
-            balls[0].x = paddleX + paddleWidth / 2 - BALL_SIZE / 2;
-            balls[0].el.style.transform = `translate(${balls[0].x}px, ${balls[0].y}px)`;
-        }
-    }
-    if ((keys["ArrowRight"] || keys["d"]) && paddle) {
-        paddleX = Math.min(CONTENT_WIDTH - paddleWidth, paddleX + PADDLE_SPEED);  // right wall
-        ... same idea ...
-    }
-```
-
-It reads the `keys` object (filled by `events.js`). Holding Left or A decreases
-`paddleX`; Right or D increases it. `Math.max(0, ...)` and
-`Math.min(CONTENT_WIDTH - paddleWidth, ...)` **clamp** the paddle so it can't leave the
-box. While the ball is still attached, it slides along with the paddle so you can aim.
-
-### 11.3 The in-play block (`if (!ballAttached)`)
-
-Everything else only happens once the ball is launched.
-
-**Fireball timer:**
-```js
-        if (throughBall) {
-            throughTimer--;
-            if (throughTimer <= 0) {       // power-up expired
-                throughBall = false;
-                balls.forEach((b) => b.el.classList.remove("fire"));
-                paddle.classList.remove("paddle-fire");
-            }
-        }
-```
-(Per the README, when fireball ends the paddle narrows — the visual reset happens here;
-the width penalty is applied on the next lost ball.)
-
-**Power-ups fall and get caught:**
-```js
-        let paddleRect = paddle.getBoundingClientRect();
-        let removedPowerups = [];
-        for (let p of powerups) {
-            p.y += POWERUP_SPEED;                                  // fall down
-            p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
-            if (p.y > CONTENT_HEIGHT) {
-                removedPowerups.push(p);                           // fell off bottom
-            } else if (aabb(p.el.getBoundingClientRect(), paddleRect)) {
-                applyPowerup(p.type);                              // caught it!
-                removedPowerups.push(p);
-            }
-        }
-        removedPowerups.forEach((p) => p.el.remove());
-        powerups = powerups.filter((p) => !removedPowerups.includes(p));
-```
-
-Notice the pattern: it collects items to delete in `removedPowerups` **first**, then
-removes them after the loop. You should never modify an array while you're looping over
-it — collecting-then-removing avoids that bug. `array.filter(fn)` returns a new array of
-only the items where `fn` is true; here it keeps the power-ups that were *not* removed.
-
-**Moving the balls + collisions** — the core of the core:
-
-```js
-        let deadBalls = [];
-        for (let b of balls) {
-            b.x += b.dx; b.y += b.dy;                          // move by velocity
-
-            if (b.x <= 0 || b.x >= CONTENT_WIDTH - BALL_SIZE) b.dx = -b.dx;  // side walls
-            if (b.y <= 0) b.dy = -b.dy;                                       // ceiling
-
-            if (b.y >= CONTENT_HEIGHT - BALL_SIZE) {           // fell off the bottom
-                deadBalls.push(b);
-                continue;                                      // skip to next ball
-            }
-
-            b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
-            let ballRect = b.el.getBoundingClientRect();
-```
-
-Bouncing off a wall is just **flipping the sign** of a velocity component. Hit a side
-wall → `dx = -dx` (reverse horizontal). Hit the ceiling → `dy = -dy`. Fall past the
-bottom → the ball is "dead." `continue` jumps straight to the next ball in the loop.
-
-**Brick collisions:**
-```js
-            let bounced = false;
-            for (let brick of bricks) {
-                if (brick.style.visibility === "hidden") continue;   // already broken
-                let brickRect = brick.getBoundingClientRect();
-                if (!aabb(ballRect, brickRect)) continue;            // no hit
-
-                brick.style.visibility = "hidden";   // "destroy" the brick (just hide it)
-                score += 10;
-                updateHUD();
-                dropPowerup(brickRect);
-                boom.currentTime = 0; boom.play();
-
-                if (bricks.every((x) => x.style.visibility === "hidden")) {
-                    // ALL bricks gone → level complete
-                    if (level < LEVELS.length) {
-                        level++; win.play(); initLevel();           // next level
-                    } else {
-                        win.play(); gameRunning = false;            // beat the game!
-                        dom.winScore.textContent = `SCORE: ${score}`;
-                        dom.win.classList.remove("hidden");
-                    }
-                    return;
-                }
-
-                if (!throughBall && !bounced) {
-                    // figure out which side we hit and bounce accordingly
-                    let overlapX = Math.min(ballRect.right - brickRect.left,
-                                            brickRect.right - ballRect.left);
-                    let overlapY = Math.min(ballRect.bottom - brickRect.top,
-                                            brickRect.bottom - ballRect.top);
-                    if (overlapX < overlapY) { b.dx = -b.dx; b.x += b.dx; }  // hit a side
-                    else                     { b.dy = -b.dy; b.y += b.dy; }  // hit top/bottom
-                    bounced = true;
-                    break;       // one bounce per frame
-                }
-                // throughBall (fireball): don't bounce, keep smashing
-            }
-```
-
-Several important ideas here:
-
-- **A brick is never deleted, just hidden** (`visibility = "hidden"`). That keeps the
-  grid layout intact (the brick still occupies its slot) and is faster than removing
-  elements. Hidden bricks are skipped on future checks.
-- **Win detection:** `bricks.every(x => x.style.visibility === "hidden")` — `array.every`
-  returns true only if the test passes for *every* item, i.e. all bricks are hidden.
-  Then either advance to the next level or show the win screen if it was the last one.
-- **Smart bounce direction:** when the ball overlaps a brick, which way should it bounce?
-  It computes how deeply the ball overlaps on the X axis vs the Y axis. The **smaller**
-  overlap is the side it actually entered from. Smaller X overlap → it hit the left/right
-  face → flip `dx`. Smaller Y overlap → hit top/bottom → flip `dy`. This makes bounces
-  look physically correct instead of random.
-- **Fireball:** if `throughBall` is on, it skips the bounce entirely and the inner loop
-  keeps going, so one fiery ball can clear several bricks in a single frame.
-- `bounced` + `break` ensure a normal ball bounces off only one brick per frame.
-
-**Paddle collision:**
-```js
-            if (aabb(ballRect, paddleRect)) {
-                impact.currentTime = 0; impact.play();
-                let hitOffset = b.x + BALL_SIZE / 2 - (paddleX + paddleWidth / 2);
-                let angle = (hitOffset / (paddleWidth / 2)) * (Math.PI / 4);
-                b.dx = Math.sin(angle) * ballSpeed;
-                b.dy = -Math.cos(angle) * ballSpeed;
-                b.y = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;  // sit on paddle
-                b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
-            }
-```
-
-This is the **control mechanic** that makes the game playable. Instead of a flat bounce,
-**where** you hit the paddle decides the angle:
-- `hitOffset` = how far from the paddle's center the ball struck (negative = left half,
-  positive = right half).
-- Dividing by `paddleWidth/2` gives a value from −1 (far left) to +1 (far right).
-- Multiplying by `Math.PI/4` (45°) gives a launch **angle** up to ±45°.
-- `dx = sin(angle) * speed`, `dy = -cos(angle) * speed` converts that angle back into a
-  velocity. `-cos` makes `dy` negative so the ball always goes **up**. Because
-  `sin² + cos² = 1`, the total speed stays exactly `ballSpeed` no matter the angle.
-
-So hitting with the edge of the paddle sends the ball off at a sharp angle; hitting dead
-center sends it straight up. That's how you aim.
-
-**Cleaning up dead balls:**
-```js
-        deadBalls.forEach((b) => { b.el.remove(); balls = balls.filter((x) => x !== b); });
-        if (balls.length === 0) loseBall();     // all balls gone → lose a life
-    }
-
-    if (gameRunning) requestAnimationFrame(gameLoop);   // schedule the next frame
+    if (gameRunning) requestAnimationFrame(gameLoop);
 }
 ```
 
-Balls that fell off the bottom are removed. Only when **every** ball is gone do you lose
-a life (so multi-ball is forgiving — losing one of three is fine). The final line
-re-schedules the loop, keeping the ~60 fps cycle going.
+If `gameRunning` is false the function returns immediately and never schedules another
+frame — that is how pausing works.
+
+### 11.1 `updateTimer(timestamp)`
+
+```js
+function updateTimer(timestamp) {
+    if (ballAttached) { lastFrameTime = 0; return; }
+    if (lastFrameTime === 0) lastFrameTime = timestamp;
+    let msPassed = timestamp - lastFrameTime;
+    lastFrameTime = timestamp;
+    if (msPassed > 50) msPassed = 50;   // cap: prevents tab-switch jump
+    timerAccum += msPassed;
+    if (timerAccum < 1000) return;
+    timerAccum = 0;
+    timeLeft = timeLeft - 1;
+    if (timeLeft < 0) timeLeft = 0;
+    updateHUD();
+    if (timeLeft === 0) {
+        timeLeft = LEVEL_TIME; timerAccum = 0; lastFrameTime = 0;
+        loseBall();
+    }
+}
+```
+
+This is a **delta-time accumulator**. Frames don't arrive evenly, so instead of assuming
+"60 frames = 1 second," it measures real milliseconds between frames, piles them up in
+`timerAccum`, and decrements `timeLeft` once per 1000 ms. The 50 ms cap prevents a long
+tab-switch from draining many seconds at once. The timer only runs while the ball is
+launched (`!ballAttached`), so you're not penalized while aiming.
+
+### 11.2 `movePaddle()`
+
+```js
+function movePaddle() {
+    if (!paddle) return;
+    if (keys["ArrowLeft"]  || keys["a"]) paddleX = Math.max(0, paddleX - PADDLE_SPEED);
+    if (keys["ArrowRight"] || keys["d"]) paddleX = Math.min(CONTENT_WIDTH - paddleWidth, paddleX + PADDLE_SPEED);
+    paddle.style.transform = `translateX(${paddleX}px)`;
+    if (ballAttached && balls[0]) {
+        balls[0].x = paddleX + paddleWidth / 2 - BALL_SIZE / 2;
+        balls[0].el.style.transform = `translate(${balls[0].x}px, ${balls[0].y}px)`;
+    }
+}
+```
+
+Reads the `keys` object on every frame. `Math.max` / `Math.min` clamp the paddle so it
+never leaves the box. While the ball is still attached, it slides with the paddle.
+
+### 11.3 `tickFireball()`
+
+```js
+function tickFireball() {
+    if (!throughBall) return;
+    if (--throughTimer <= 0) {
+        throughBall = false;
+        balls.forEach(b => b.el.classList.remove("fire"));
+        paddle.classList.remove("paddle-fire");
+    }
+}
+```
+
+Counts down the fireball timer each frame and removes the effect when it expires.
+
+### 11.4 `movePowerups()`
+
+```js
+function movePowerups() {
+    let paddleRect = paddle.getBoundingClientRect();
+    powerups = powerups.filter(p => {
+        p.y += POWERUP_SPEED;
+        p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+        if (p.y > CONTENT_HEIGHT) { p.el.remove(); return false; }
+        if (aabb(p.el.getBoundingClientRect(), paddleRect)) {
+            applyPowerup(p.type); p.el.remove(); return false;
+        }
+        return true;
+    });
+}
+```
+
+Uses `Array.filter` to move every power-up and rebuild the `powerups` array in one pass,
+keeping only those still on screen. Power-ups that fall off the bottom or are caught by
+the paddle remove their `<div>` and return `false` (excluded from the new array).
+
+### 11.5 `moveBalls()` — brick and paddle collisions
+
+```js
+function moveBalls() {
+    let paddleRect = paddle.getBoundingClientRect();
+    for (let i = balls.length - 1; i >= 0; i--) {
+        let b = balls[i];
+        b.x += b.dx; b.y += b.dy;
+
+        if (b.x <= 0 || b.x >= CONTENT_WIDTH - BALL_SIZE) b.dx = -b.dx;
+        if (b.y <= 0) b.dy = -b.dy;
+        if (b.y >= CONTENT_HEIGHT - BALL_SIZE) { b.el.remove(); balls.splice(i, 1); continue; }
+
+        b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
+        let ballRect = b.el.getBoundingClientRect();
+        ...
+    }
+    if (balls.length === 0) loseBall();
+    return false;
+}
+```
+
+Iterates the `balls` array **backwards** (`i = balls.length - 1` down to `0`). Going
+backwards lets the loop safely call `balls.splice(i, 1)` to remove a dead ball in-place
+— removing an item from position `i` doesn't affect items at lower indices that haven't
+been visited yet.
+
+**Brick collisions** (same logic as before):
+
+- Each ball is checked against every non-hidden brick using `aabb`.
+- A hit brick is hidden (`visibility = "hidden"`), scores +10, and may drop a power-up.
+- `bricks.every(x => x.style.visibility === "hidden")` detects a cleared level.
+- A normal ball bounces using the smaller-overlap rule (see §7 in MECHANICS.md).
+- A fireball skips the bounce and keeps smashing.
+- `moveBalls` returns `true` when a level ends so `gameLoop` exits immediately.
+
+**Paddle collision:**
+
+```js
+        if (aabb(ballRect, paddleRect)) {
+            impact.currentTime = 0; impact.play();
+            let hitPos = (b.x + BALL_SIZE / 2 - paddleX) / paddleWidth;
+            b.dx = (hitPos - 0.5) * 2 * ballSpeed;
+            b.dy = -ballSpeed;
+            b.y = CONTENT_HEIGHT - 20 - PADDLE_HEIGHT - BALL_SIZE;
+            b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
+        }
+```
+
+This is the **control mechanic** that makes the game playable. `hitPos` is 0 at the
+paddle's left edge, 0.5 at dead center, and 1 at the right edge. Subtracting 0.5 and
+multiplying by 2 turns that into a range of −1 to +1, which is then multiplied by
+`ballSpeed` to get `dx`. `dy` is always exactly `−ballSpeed` (straight upward component).
+
+So hitting the center gives `dx = 0` (straight up); hitting an edge gives `dx = ±ballSpeed`
+(sharp diagonal). The ball always launches upward regardless of where it hits.
 
 ### 11.4 `loseBall()`
 
