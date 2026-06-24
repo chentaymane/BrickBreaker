@@ -101,13 +101,6 @@ BrickBreaker/
 │   ├── select.mp3             # Menu selection
 │   └── click.mp3              # Button click
 │
-├── docs/                       # Full code documentation
-│   ├── README.md              # Doc index
-│   ├── DEVELOPER_GUIDE.md     # How to modify the game
-│   ├── FUNCTIONS.md           # Function reference
-│   ├── MECHANICS.md           # Game physics explained
-│   └── DEEP_DIVE.md           # Architecture deep dive
-│
 └── script/                     # Game logic
     ├── background.js          # 60 FPS tick loop
     ├── events.js              # Input handlers & UI
@@ -126,17 +119,6 @@ BrickBreaker/
         ├── level.js           # Level management
         └── loop.js            # Main game loop
 ```
-
-## 📚 Learning Resources
-
-This game is built as an **educational project**. Want to understand how it works?
-
-- **[DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)** — How to modify levels, colors, physics
-- **[MECHANICS.md](docs/MECHANICS.md)** — Ball physics, collision, power-ups explained
-- **[FUNCTIONS.md](docs/FUNCTIONS.md)** — Complete function reference
-- **[DEEP_DIVE.md](docs/DEEP_DIVE.md)** — Full architecture walkthrough
-
-Each file is heavily commented. No black boxes.
 
 ## 🛠️ Browser Compatibility
 
