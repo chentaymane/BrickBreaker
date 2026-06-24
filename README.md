@@ -1,76 +1,156 @@
-# Brick Breaker
+# 🎮 Brick Breaker
 
-A neon arcade brick breaker built with vanilla HTML, CSS, and JavaScript — no dependencies, no build step.
+A **retro neon arcade brick breaker** game built with vanilla HTML, CSS, and JavaScript. Zero dependencies. Zero build steps. Just pure, unoptimized fun.
 
-> 📚 **Want to understand how the code works?** See the [`docs/`](docs/README.md) folder —
-> a full from-zero explanation of every file, function, and calculation in the game.
+## ✨ Features
 
-## How to Play
+- **60 FPS constant** — smooth, responsive gameplay
+- **10 unique levels** — pyramid, diamond, X-pattern, checkerboard, castle, and more
+- **Power-ups** — multi-ball and fireball mechanics
+- **Dynamic difficulty** — ball speed increases each level
+- **Persistent HUD** — real-time level, score, timer, and lives display
+- **Sound effects & music** — toggle on/off during gameplay
+- **Pause system** — pause/resume with audio toggle in-game
+- **Responsive design** — neon UI with glowing effects
 
-Open `index.html` in any browser. That's it.
+## 🚀 Quick Start
 
-1. Click **START GAME** on the menu screen.
-2. Press **Space** to launch the ball.
-3. Move the paddle to keep the ball in play.
-4. Break all the bricks to advance to the next level.
-5. You have **3 lives** and **60 seconds** per level.
+1. **Open** `index.html` in any modern browser
+2. **Click** START GAME
+3. **Press Space** to launch the ball
+4. **Move paddle** with arrow keys or `A`/`D`
+5. **Break all bricks** to advance to the next level
 
-## Controls
+That's it. No server, no build, no installation.
 
+## 🎮 How to Play
+
+### Objective
+Break all bricks on the screen within 60 seconds. You have 3 lives. Advance through 10 levels to win.
+
+### Controls
 | Input | Action |
 |-------|--------|
-| `←` `→` or `A` `D` | Move paddle |
+| `←` / `→` or `A` / `D` | Move paddle |
 | `Space` | Launch ball |
-| `Escape` or Pause button | Pause / resume |
-| Music button | Toggle background music |
-| SFX button | Toggle sound effects |
+| `Esc` or **PAUSE button** | Pause / resume game |
+| **Music button** | Toggle background music |
+| **SFX button** | Toggle sound effects |
 
-## Power-ups
+### Mechanics
+- **Ball physics** — bounces off walls, paddle, and bricks
+- **Paddle collision** — spin the ball based on impact zone
+- **Brick destruction** — 10 points per brick
+- **Timer** — 60 seconds per level (turns red at 10s remaining)
+- **Lives** — lose one each time the ball falls off screen
 
-Power-ups drop randomly when bricks are broken.
+## 🎁 Power-ups
+
+Power-ups drop randomly when you break bricks.
 
 | Icon | Name | Effect |
 |------|------|--------|
-| ⚡ | Multi-Ball | Splits into 3 balls |
-| 🔥 | Fireball | Ball breaks through all bricks; paddle narrows when power-up ends |
+| ⚡ | **Multi-Ball** | Ball splits into 3 balls with separate physics |
+| 🔥 | **Fireball** | Ball destroys all bricks it touches (no bouncing) |
 
-## Levels
+Power-up effects last 8 seconds, then revert to normal.
 
-10 levels with unique brick layouts (pyramid, diamond, X, checkerboard, castle…). Ball speed increases every level. Score and lives carry over between levels.
+## 📊 Scoring
 
-## Scoring
+| Action | Points |
+|--------|--------|
+| Brick destroyed | +10 |
+| Level completed | +100 |
+| Bonus (time remaining) | +time left |
 
-- **10 points** per brick destroyed.
-- Score is shown live in the HUD and on the win / game over screen.
+Scores persist across levels. See your total on the win/game-over screen.
 
-## Project Structure
+## 📐 Level Layouts
+
+All 10 levels feature unique brick patterns:
+
+1. **Pyramid** — classic triangle layout
+2. **Diamond** — centered diamond shape
+3. **X-Pattern** — diagonal cross
+4. **Checkerboard** — alternating grid
+5. **Castle** — two towers
+6. **Waves** — rippling rows
+7. **Spiral** — rotating pattern
+8. **Rings** — concentric circles
+9. **Zigzag** — lightning bolt shape
+10. **Final Boss** — dense wall
+
+Ball speed increases on each level.
+
+## 📁 Project Structure
 
 ```
 BrickBreaker/
-├── index.html
-├── style.css
-├── sounds/
-│   ├── theme.mp3
-│   ├── boom.mp3
-│   ├── eat.mp3
-│   ├── impact.mp3
-│   ├── lose.mp3
-│   ├── win.mp3
-│   ├── gameover.mp3
-│   ├── select.mp3
-│   └── click.mp3
-└── script/
-    ├── background.js       # Canvas background (solid fill)
-    ├── events.js           # Input and UI event listeners
+├── index.html                  # Game entry point
+├── style.css                   # Simplified neon styling
+├── README.md                   # This file
+│
+├── sounds/                     # Game audio
+│   ├── theme.mp3              # Background music
+│   ├── boom.mp3               # Brick destruction
+│   ├── eat.mp3                # Power-up collected
+│   ├── impact.mp3             # Ball impact
+│   ├── lose.mp3               # Lost life
+│   ├── win.mp3                # Level won
+│   ├── gameover.mp3           # Game over
+│   ├── select.mp3             # Menu selection
+│   └── click.mp3              # Button click
+│
+├── docs/                       # Full code documentation
+│   ├── README.md              # Doc index
+│   ├── DEVELOPER_GUIDE.md     # How to modify the game
+│   ├── FUNCTIONS.md           # Function reference
+│   ├── MECHANICS.md           # Game physics explained
+│   └── DEEP_DIVE.md           # Architecture deep dive
+│
+└── script/                     # Game logic
+    ├── background.js          # 60 FPS tick loop
+    ├── events.js              # Input handlers & UI
+    │
     ├── core/
-    │   ├── constants.js    # DOM refs, game constants, level layouts
-    │   └── state.js        # Mutable game state
+    │   ├── constants.js       # Game config & level layouts
+    │   └── state.js           # Game state variables
+    │
     ├── audio/
-    │   └── sounds.js       # Audio setup
+    │   └── sounds.js          # Sound manager
+    │
     └── game/
-        ├── collision.js    # aabb() rectangle overlap test
-        ├── ball.js         # spawnBall(), attachBall()
-        ├── powerup.js      # dropPowerup(), applyPowerup()
-        ├── level.js        # updateHUD(), initLevel(), init(), reset()
-        └── loop.js         # gameLoop() and per-frame helper functions
+        ├── ball.js            # Ball spawn & physics
+        ├── collision.js       # Collision detection (AABB)
+        ├── powerup.js         # Power-up logic
+        ├── level.js           # Level management
+        └── loop.js            # Main game loop
 ```
+
+## 📚 Learning Resources
+
+This game is built as an **educational project**. Want to understand how it works?
+
+- **[DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md)** — How to modify levels, colors, physics
+- **[MECHANICS.md](docs/MECHANICS.md)** — Ball physics, collision, power-ups explained
+- **[FUNCTIONS.md](docs/FUNCTIONS.md)** — Complete function reference
+- **[DEEP_DIVE.md](docs/DEEP_DIVE.md)** — Full architecture walkthrough
+
+Each file is heavily commented. No black boxes.
+
+## 🛠️ Browser Compatibility
+
+- **Chrome/Chromium** ✅
+- **Firefox** ✅
+- **Safari** ✅
+- **Edge** ✅
+
+Requires ES6+ JavaScript and HTML5 Audio API.
+
+## 📝 License
+
+Open source. Do whatever you want with it.
+
+---
+
+**Made with ❤️ and neon vibes**
