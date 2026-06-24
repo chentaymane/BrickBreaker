@@ -1,17 +1,12 @@
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
+// Force 60 FPS always - never stop rendering even when idle
+let frameCounter = 0;
 
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+function maintain60FPS() {
+    // Toggle a CSS variable to force constant repaints
+    // This keeps 60 FPS even when nothing is animating
+    frameCounter++;
+    document.documentElement.style.setProperty('--frame-tick', frameCounter % 2);
+    requestAnimationFrame(maintain60FPS);
 }
 
-function drawBackground() {
-    ctx.fillStyle = '#000814';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    requestAnimationFrame(drawBackground);
-}
-
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-drawBackground();
+maintain60FPS();
