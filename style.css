@@ -36,6 +36,8 @@ body {
 #level-display {
     color: #00f0ff;
     text-shadow: 0 0 10px #00f0ff;
+    animation: titleFloat 4s ease-in-out infinite;
+
 }
 #score-display {
     color: #00ffaa;
@@ -89,11 +91,36 @@ body {
     font-size: 3rem;
     letter-spacing: 10px;
     margin-bottom: 6px;
+
     text-shadow:
         0 0 20px #00f0ff,
         0 0 60px rgba(0, 240, 255, 0.3);
+
+    /* Performance-friendly animation */
+    animation: titleFloat 4s ease-in-out infinite;
+    will-change: transform;
 }
 
+@keyframes titleFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+/* Add this class to disable animation */
+.game-title.no-animation {
+    animation: none;
+}
+
+/* Respect user accessibility preferences */
+@media (prefers-reduced-motion: reduce) {
+    .game-title {
+        animation: none;
+    }
+}
 /* ─── Menu Art ───────────────────────────────────────────── */
 .menu-art {
     display: flex;
