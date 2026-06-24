@@ -1,5 +1,6 @@
 dom.start.addEventListener("click", function () {
-    select.currentTime = 0; select.play();
+    select.currentTime = 0;
+    select.play();
     gamestarted = true;
     dom.menu.style.display = "none";
     dom.pause.hidden = false;
